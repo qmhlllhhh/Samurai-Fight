@@ -36,6 +36,8 @@ set(SOURCES
     # Scenes
     src/scenes/Scene.cpp
     src/scenes/MainMenuScene.cpp
+    src/scenes/BattleScene.cpp
+    src/scenes/PauseScene.cpp
 
     # Utils
     src/utils/JsonLoader.cpp

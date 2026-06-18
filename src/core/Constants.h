@@ -21,27 +21,27 @@ constexpr char WINDOW_TITLE[] = "Samurai Fight";
 // 游戏机制相关
 constexpr int MAX_HEALTH = 100;
 constexpr int MAX_STAMINA = 100;
-constexpr int ROUND_TIME = 60;          // 秒
-constexpr int WINS_NEEDED = 2;          // 三局两胜
+constexpr int ROUND_TIME = 60; // 秒
+constexpr int WINS_NEEDED = 2; // 三局两胜
 
 // 输入缓冲
-constexpr int INPUT_BUFFER_SIZE = 12;   // 12帧缓冲窗口
+constexpr int INPUT_BUFFER_SIZE = 12; // 12帧缓冲窗口
 
 // 体力消耗
-constexpr float STAMINA_RECOVERY_RATE = 0.5f;     // 站立时每帧恢复
-constexpr float MOVE_STAMINA_COST = 0.1f;         // 移动每帧消耗
-constexpr float JUMP_STAMINA_COST = 10.0f;        // 跳跃消耗
-constexpr float BLOCK_STAMINA_MULTIPLIER = 0.5f;  // 防御时体力消耗倍率
+constexpr float STAMINA_RECOVERY_RATE = 0.5f;    // 站立时每帧恢复
+constexpr float MOVE_STAMINA_COST = 0.1f;        // 移动每帧消耗
+constexpr float JUMP_STAMINA_COST = 10.0f;       // 跳跃消耗
+constexpr float BLOCK_STAMINA_MULTIPLIER = 0.5f; // 防御时体力消耗倍率
 
 // 防御减免
-constexpr float BLOCK_DAMAGE_REDUCTION = 0.5f;    // 防御时伤害减免50%
+constexpr float BLOCK_DAMAGE_REDUCTION = 0.5f; // 防御时伤害减免50%
 
 // 角色尺寸
 constexpr int CHARACTER_WIDTH = 128;
 constexpr int CHARACTER_HEIGHT = 128;
 
 // 场景背景数量
-constexpr int BACKGROUND_COUNT = 6;
+constexpr int BACKGROUND_COUNT = 5;
 
 // 默认音量
 constexpr float DEFAULT_MASTER_VOLUME = 1.0f;

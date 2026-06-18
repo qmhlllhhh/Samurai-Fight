@@ -16,7 +16,7 @@ namespace SamuraiFight {
  * 定义场景的基本接口，包括进入、退出、事件处理、更新和渲染
  */
 class Scene {
-public:
+  public:
     /**
      * @brief 构造函数
      */
@@ -56,7 +56,7 @@ public:
      *
      * @param window 游戏窗口
      */
-    virtual void handleEvents(sf::RenderWindow& window) = 0;
+    virtual void handleEvents(sf::RenderWindow &window) = 0;
 
     /**
      * @brief 更新场景逻辑
@@ -70,7 +70,7 @@ public:
      *
      * @param window 游戏窗口
      */
-    virtual void render(sf::RenderWindow& window) = 0;
+    virtual void render(sf::RenderWindow &window) = 0;
 
     /**
      * @brief 获取场景是否完成
@@ -80,17 +80,18 @@ public:
      * @return true 场景已完成
      * @return false 场景未完成
      */
-    virtual bool isFinished() const;
+    virtual int getPopSceneCount() const;
 
     /**
      * @brief 获取下一个场景
      *
      * @return std::unique_ptr<Scene> 下一个场景
      */
-    virtual std::unique_ptr<Scene> getNextScene() const;
+    virtual std::unique_ptr<Scene> getNextScene();
 
-protected:
-    bool m_finished;  ///< 场景完成标志
+  protected:
+    int m_popSceneCount;
+    std::unique_ptr<Scene> m_nextScene; ///< 下一个场景指针
 };
 
 } // namespace SamuraiFight

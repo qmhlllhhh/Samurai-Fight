@@ -3,7 +3,7 @@
 namespace SamuraiFight {
 
 Scene::Scene()
-    : m_finished(false) {
+    : m_popSceneCount(0) {
 }
 
 Scene::~Scene() {
@@ -25,12 +25,14 @@ void Scene::onResume() {
     // 默认实现：空操作
 }
 
-bool Scene::isFinished() const {
-    return m_finished;
+int Scene::getPopSceneCount() const {
+    return m_popSceneCount;
 }
 
-std::unique_ptr<Scene> Scene::getNextScene() const {
-    // 默认实现：返回空指针
+std::unique_ptr<Scene> Scene::getNextScene() {
+    if (m_nextScene) {
+        return std::move(m_nextScene);
+    }
     return nullptr;
 }
 

@@ -870,7 +870,7 @@ SamuraiFight/
 - [ ] HealthBar, StaminaBar
 - [ ] Timer, ScoreDisplay
 - [ ] 角色选择界面
-- [ ] 暂停菜单
+- [x] 暂停菜单
 - [ ] 结果界面
 
 **交付物**：完整的游戏UI
