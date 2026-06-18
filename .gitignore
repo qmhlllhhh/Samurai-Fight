@@ -1,18 +1,73 @@
-# CMake 构建产物（忽略整个 build 目录）
-build/
-CMakeCache.txt
-CMakeFiles/
+# Prerequisites
+*.d
 
-# 编译生成的可执行文件
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+*.so.*
+
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
 *.exe
 *.out
 *.app
 
-# VSCode 本地配置
-.vscode/
+# Build directories
+build/
+Build/
+build-*/
 
-# MSYS2 / MinGW 生成的临时文件
-*.o
-*.a
-*.dll
-*.exe~
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+compile_commands.json
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+*.swp
+
+# vcpkg
+vcpkg_installed/
+
+# debug information files
+*.dwo
+
+# test output & cache
+Testing/
+.cache/
+
+# vscode
+
+.vscode
