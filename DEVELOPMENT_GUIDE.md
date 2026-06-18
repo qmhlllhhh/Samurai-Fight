@@ -822,15 +822,15 @@ SamuraiFight/
 
 ## 七、开发路线图
 
-### 阶段 1：项目框架（第 1 周）
+### 阶段 1：项目框架（第 1 周）✅ 已完成
 
-- [ ] CMake 项目搭建
-- [ ] Game 类、GameLoop 实现
-- [ ] ResourceManager 基础实现
-- [ ] SceneManager 框架
-- [ ] 主菜单场景
+- [x] CMake 项目搭建
+- [x] Game 类、GameLoop 实现
+- [x] ResourceManager 基础实现
+- [x] SceneManager 框架
+- [x] 主菜单场景
 
-**交付物**：可运行的主菜单窗口
+**交付物**：可运行的主菜单窗口 ✅
 
 ### 阶段 2：角色系统（第 2-3 周）
 

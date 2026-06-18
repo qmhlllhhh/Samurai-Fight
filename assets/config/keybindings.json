@@ -1,0 +1,27 @@
+{
+    "player1": {
+        "moveLeft": "A",
+        "moveRight": "D",
+        "jump": "W",
+        "crouch": "S",
+        "attackLight": "J",
+        "attackMedium": "K",
+        "attackHeavy": "L",
+        "attackSpecial": "U",
+        "block": "I"
+    },
+    "player2": {
+        "moveLeft": "Left",
+        "moveRight": "Right",
+        "jump": "Up",
+        "crouch": "Down",
+        "attackLight": "Numpad1",
+        "attackMedium": "Numpad2",
+        "attackHeavy": "Numpad3",
+        "attackSpecial": "Numpad4",
+        "block": "Numpad5"
+    },
+    "global": {
+        "pause": "Escape"
+    }
+}
