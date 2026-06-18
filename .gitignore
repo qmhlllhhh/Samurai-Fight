@@ -1,0 +1,18 @@
+# CMake 构建产物（忽略整个 build 目录）
+build/
+CMakeCache.txt
+CMakeFiles/
+
+# 编译生成的可执行文件
+*.exe
+*.out
+*.app
+
+# VSCode 本地配置
+.vscode/
+
+# MSYS2 / MinGW 生成的临时文件
+*.o
+*.a
+*.dll
+*.exe~
