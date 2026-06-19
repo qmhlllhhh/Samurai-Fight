@@ -7,23 +7,8 @@
 
 namespace SamuraiFight {
 
-Character::Character(const CharacterData& data, int playerIndex)
-    : Entity()
-    , m_data(data)
-    , m_stateMachine(nullptr)
-    , m_animation(nullptr)
-    , m_hitbox(nullptr)
-    , m_inputBuffer(nullptr)
-    , m_playerIndex(playerIndex)
-    , m_facingRight(true)
-    , m_frameCount(0)
-    , m_moveLeft(false)
-    , m_moveRight(false)
-    , m_jump(false)
-    , m_crouch(false)
-    , m_attackLight(false)
-    , m_attackMedium(false)
-    , m_attackHeavy(false) {
+Character::Character(const CharacterData &data, int playerIndex)
+    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false) {
     // 设置初始位置
     float startX = (playerIndex == 0) ? 300.0f : WINDOW_WIDTH - 300.0f;
     setPosition(sf::Vector2f(startX, GROUND_LEVEL));
@@ -53,14 +38,14 @@ void Character::initializeComponents() {
     }
 
     // 创建精灵
-    const sf::Texture& texture = ResourceManager::getInstance().getTexture(initialTexture);
+    const sf::Texture &texture = ResourceManager::getInstance().getTexture(initialTexture);
     m_sprite = std::make_unique<sf::Sprite>(texture);
 
     // 创建动画组件
     m_animation = std::make_unique<AnimationComponent>(*m_sprite);
 
     // 加载动画
-    for (const auto& [name, animData] : m_data.animations) {
+    for (const auto &[name, animData] : m_data.animations) {
         m_animation->loadAnimation(name, animData);
     }
 
@@ -68,7 +53,7 @@ void Character::initializeComponents() {
     m_hitbox = std::make_unique<HitboxComponent>();
 
     // 加载碰撞框数据
-    for (const auto& [state, hitboxData] : m_data.hitboxes) {
+    for (const auto &[state, hitboxData] : m_data.hitboxes) {
         m_hitbox->loadHitboxes(state, hitboxData);
     }
 
@@ -81,6 +66,10 @@ void Character::initializeComponents() {
 
 void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
                             bool attackLight, bool attackMedium, bool attackHeavy) {
+
+    if (moveLeft && moveRight) {
+        moveLeft = moveRight = 0;
+    }
     m_moveLeft = moveLeft;
     m_moveRight = moveRight;
     m_jump = jump;
@@ -230,7 +219,8 @@ void Character::update(float deltaTime) {
 }
 
 void Character::updateInputBuffer() {
-    if (!m_inputBuffer) return;
+    if (!m_inputBuffer)
+        return;
 
     m_inputBuffer->setCurrentFrame(m_frameCount);
 
@@ -249,17 +239,17 @@ void Character::updateInputBuffer() {
     }
 }
 
-void Character::render(sf::RenderWindow& window) {
+void Character::render(sf::RenderWindow &window) {
     if (m_sprite) {
         window.draw(*m_sprite);
     }
 
-    // 调试模式：渲染碰撞框
-    #ifdef DEBUG
+// 调试模式：渲染碰撞框
+#ifdef DEBUG
     if (m_hitbox) {
         m_hitbox->renderDebug(window);
     }
-    #endif
+#endif
 }
 
 void Character::changeState(CharacterStateType stateType) {
@@ -268,7 +258,7 @@ void Character::changeState(CharacterStateType stateType) {
     }
 }
 
-void Character::playAnimation(const std::string& name) {
+void Character::playAnimation(const std::string &name) {
     if (m_animation) {
         m_animation->play(name);
     }
@@ -308,11 +298,11 @@ int Character::getPlayerIndex() const {
     return m_playerIndex;
 }
 
-const CharacterData& Character::getData() const {
+const CharacterData &Character::getData() const {
     return m_data;
 }
 
-InputBuffer& Character::getInputBuffer() {
+InputBuffer &Character::getInputBuffer() {
     return *m_inputBuffer;
 }
 
