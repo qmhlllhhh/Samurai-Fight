@@ -1,10 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <unordered_map>
-#include <string>
-#include <memory>
+#include "../core/Constants.h"
 #include "../entities/CharacterData.h"
+#include <SFML/Graphics.hpp>
+#include <memory>
+#include <string>
+#include <unordered_map>
 
 namespace SamuraiFight {
 
@@ -20,13 +21,13 @@ namespace SamuraiFight {
  * 支持精灵表动画，包括帧动画播放、循环控制等
  */
 class AnimationComponent {
-public:
+  public:
     /**
      * @brief 构造函数
      *
      * @param sprite 关联的精灵
      */
-    AnimationComponent(sf::Sprite& sprite);
+    AnimationComponent(sf::Sprite &sprite);
 
     /**
      * @brief 析构函数
@@ -41,14 +42,14 @@ public:
      * @return true 加载成功
      * @return false 加载失败
      */
-    bool loadAnimation(const std::string& name, const AnimationData& data);
+    bool loadAnimation(const std::string &name, const AnimationData &data);
 
     /**
      * @brief 播放指定动画
      *
      * @param name 动画名称
      */
-    void play(const std::string& name);
+    void play(const std::string &name);
 
     /**
      * @brief 更新动画
@@ -84,13 +85,13 @@ public:
      */
     void reset();
 
-private:
+  private:
     /**
      * @brief 更新精灵纹理区域
      */
     void updateSpriteRect();
 
-    sf::Sprite& m_sprite;                                       ///< 关联的精灵
+    sf::Sprite &m_sprite;                                        ///< 关联的精灵
     std::unordered_map<std::string, AnimationData> m_animations; ///< 动画数据
 
     std::string m_currentAnimation; ///< 当前动画名称

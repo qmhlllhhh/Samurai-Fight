@@ -81,6 +81,19 @@ class BattleScene : public Scene {
      */
     void initializeBackground();
 
+    /**
+     * @brief 检查角色间的碰撞
+     */
+    void checkCollisions();
+
+    /**
+     * @brief 检查两个角色的攻击碰撞
+     *
+     * @param attacker 攻击者索引
+     * @param defender 防御者索引
+     */
+    void checkAttackCollision(int attacker, int defender);
+
     std::string m_backgroundId[BACKGROUND_COUNT];
     std::unique_ptr<sf::Sprite> m_background; ///< 战斗背景
     sf::RenderWindow *m_window;               ///< 游戏窗口指针

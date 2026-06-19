@@ -4,6 +4,7 @@
 #include "MoveState.h"
 #include "JumpState.h"
 #include "CrouchState.h"
+#include "AttackState.h"
 
 #include <iostream>
 
@@ -70,6 +71,12 @@ std::unique_ptr<CharacterState> StateMachine::createState(CharacterStateType sta
         return std::make_unique<JumpState>(m_owner);
     case CharacterStateType::Crouch:
         return std::make_unique<CrouchState>(m_owner);
+    case CharacterStateType::AttackLight:
+        return std::make_unique<AttackState>(m_owner, "light");
+    case CharacterStateType::AttackMedium:
+        return std::make_unique<AttackState>(m_owner, "medium");
+    case CharacterStateType::AttackHeavy:
+        return std::make_unique<AttackState>(m_owner, "heavy");
     default:
         std::cerr << "StateMachine: Unknown state type " << static_cast<int>(stateType) << std::endl;
         return nullptr;

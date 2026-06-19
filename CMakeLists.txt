@@ -56,6 +56,7 @@ set(SOURCES
     src/states/MoveState.cpp
     src/states/JumpState.cpp
     src/states/CrouchState.cpp
+    src/states/AttackState.cpp
 
     # Utils
     src/utils/JsonLoader.cpp

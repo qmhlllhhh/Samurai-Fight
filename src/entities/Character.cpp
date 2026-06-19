@@ -2,13 +2,14 @@
 #include "../core/Constants.h"
 #include "../managers/ResourceManager.h"
 #include "../states/StateMachine.h"
+#include "../states/AttackState.h"
 
 #include <iostream>
 
 namespace SamuraiFight {
 
 Character::Character(const CharacterData &data, int playerIndex)
-    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false) {
+    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false) {
     // 设置初始位置
     float startX = (playerIndex == 0) ? 300.0f : WINDOW_WIDTH - 300.0f;
     setPosition(sf::Vector2f(startX, GROUND_LEVEL));
@@ -108,6 +109,48 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
 
     // ========== 地面状态处理 ==========
 
+    // ========== 攻击状态处理 ==========
+    bool isAttackState = (currentState == CharacterStateType::AttackLight ||
+                          currentState == CharacterStateType::AttackMedium ||
+                          currentState == CharacterStateType::AttackHeavy);
+
+    if (isAttackState) {
+        // 检查是否可以取消当前攻击
+        if (canCancelAttack()) {
+            // 优先级：重 > 中 > 轻
+            if (attackHeavy && currentState != CharacterStateType::AttackHeavy) {
+                changeState(CharacterStateType::AttackHeavy);
+                return;
+            }
+            if (attackMedium && currentState != CharacterStateType::AttackMedium) {
+                changeState(CharacterStateType::AttackMedium);
+                return;
+            }
+            if (attackLight && currentState != CharacterStateType::AttackLight) {
+                changeState(CharacterStateType::AttackLight);
+                return;
+            }
+        }
+        // 攻击状态下不处理其他输入
+        return;
+    }
+
+    // 地面攻击（站立或下蹲状态）
+    if (m_onGround) {
+        if (attackHeavy) {
+            changeState(CharacterStateType::AttackHeavy);
+            return;
+        }
+        if (attackMedium) {
+            changeState(CharacterStateType::AttackMedium);
+            return;
+        }
+        if (attackLight) {
+            changeState(CharacterStateType::AttackLight);
+            return;
+        }
+    }
+
     // 跳跃优先级最高
     if (jump && m_onGround && currentState != CharacterStateType::Jump) {
         changeState(CharacterStateType::Jump);
@@ -184,6 +227,8 @@ void Character::update(float deltaTime) {
     // 更新碰撞框
     if (m_hitbox) {
         std::string stateName;
+        int frame = getCurrentAnimationFrame();
+
         switch (getCurrentStateType()) {
         case CharacterStateType::Idle:
             stateName = "idle";
@@ -197,11 +242,29 @@ void Character::update(float deltaTime) {
         case CharacterStateType::Crouch:
             stateName = "crouch";
             break;
+        case CharacterStateType::AttackLight:
+        case CharacterStateType::AttackMedium:
+        case CharacterStateType::AttackHeavy:
+            {
+                // 攻击状态使用攻击帧数
+                AttackState* attackState = dynamic_cast<AttackState*>(m_stateMachine->getCurrentState());
+                if (attackState) {
+                    frame = attackState->getCurrentAttackFrame();
+                }
+                if (getCurrentStateType() == CharacterStateType::AttackLight) {
+                    stateName = "attack_light";
+                } else if (getCurrentStateType() == CharacterStateType::AttackMedium) {
+                    stateName = "attack_medium";
+                } else {
+                    stateName = "attack_heavy";
+                }
+            }
+            break;
         default:
             stateName = "idle";
             break;
         }
-        m_hitbox->update(m_position, stateName, getCurrentAnimationFrame(), m_facingRight);
+        m_hitbox->update(m_position, stateName, frame, m_facingRight);
     }
 
     // 更新精灵位置
@@ -244,12 +307,10 @@ void Character::render(sf::RenderWindow &window) {
         window.draw(*m_sprite);
     }
 
-// 调试模式：渲染碰撞框
-#ifdef DEBUG
-    if (m_hitbox) {
+    // 渲染调试碰撞框
+    if (m_showDebugHitboxes && m_hitbox) {
         m_hitbox->renderDebug(window);
     }
-#endif
 }
 
 void Character::changeState(CharacterStateType stateType) {
@@ -326,6 +387,65 @@ void Character::checkGroundCollision() {
     } else {
         m_onGround = false;
     }
+}
+
+HitboxComponent* Character::getHitboxComponent() {
+    return m_hitbox.get();
+}
+
+const HitboxComponent* Character::getHitboxComponent() const {
+    return m_hitbox.get();
+}
+
+StateMachine* Character::getStateMachine() {
+    return m_stateMachine.get();
+}
+
+bool Character::canCancelAttack() const {
+    if (!m_stateMachine) return false;
+
+    CharacterState* state = m_stateMachine->getCurrentState();
+    if (!state) return false;
+
+    CharacterStateType type = state->getType();
+    if (type == CharacterStateType::AttackLight ||
+        type == CharacterStateType::AttackMedium ||
+        type == CharacterStateType::AttackHeavy) {
+        // 从AttackState获取取消信息
+        AttackState* attackState = dynamic_cast<AttackState*>(state);
+        if (attackState) {
+            return attackState->canCancel();
+        }
+    }
+    return false;
+}
+
+bool Character::isInAttackActiveFrames() const {
+    if (!m_stateMachine) return false;
+
+    CharacterStateType type = getCurrentStateType();
+    if (type != CharacterStateType::AttackLight &&
+        type != CharacterStateType::AttackMedium &&
+        type != CharacterStateType::AttackHeavy) {
+        return false;
+    }
+
+    // 需要从AttackState获取判定帧信息
+    // 这里简化处理，实际应该dynamic_cast到AttackState
+    return false;  // 暂时返回false，后续优化
+}
+
+void Character::takeDamage(float damage, int stunFrames) {
+    // TODO: 实现伤害处理和进入Hurt状态
+    std::cout << "Character " << m_data.name << " takes " << damage << " damage, stun for " << stunFrames << " frames" << std::endl;
+}
+
+void Character::setShowDebugHitboxes(bool show) {
+    m_showDebugHitboxes = show;
+}
+
+bool Character::isShowDebugHitboxes() const {
+    return m_showDebugHitboxes;
 }
 
 } // namespace SamuraiFight

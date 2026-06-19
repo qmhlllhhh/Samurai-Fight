@@ -153,6 +153,66 @@ public:
      */
     int getFrameCount() const;
 
+    /**
+     * @brief 获取碰撞框组件
+     *
+     * @return HitboxComponent* 碰撞框组件指针
+     */
+    HitboxComponent* getHitboxComponent();
+
+    /**
+     * @brief 获取碰撞框组件（常量版本）
+     *
+     * @return const HitboxComponent* 碰撞框组件指针
+     */
+    const HitboxComponent* getHitboxComponent() const;
+
+    /**
+     * @brief 获取状态机
+     *
+     * @return StateMachine* 状态机指针
+     */
+    StateMachine* getStateMachine();
+
+    /**
+     * @brief 检查当前是否可以取消攻击
+     *
+     * @return true 可以取消
+     * @return false 不能取消
+     */
+    bool canCancelAttack() const;
+
+    /**
+     * @brief 获取当前攻击是否处于判定帧
+     *
+     * @return true 在判定帧
+     * @return false 不在判定帧
+     */
+    bool isInAttackActiveFrames() const;
+
+    /**
+     * @brief 受到伤害
+     *
+     * @param damage 伤害值
+     * @param stunFrames 硬直帧数
+     */
+    void takeDamage(float damage, int stunFrames);
+
+    /**
+     * @brief 设置是否显示调试碰撞框
+     *
+     * @param show 是否显示
+     */
+    void setShowDebugHitboxes(bool show);
+
+    /**
+     * @brief 获取是否显示调试碰撞框
+     *
+     * @return true 显示
+     * @return false 不显示
+     */
+    bool isShowDebugHitboxes() const;
+
 private:
     /**
      * @brief 初始化组件
@@ -195,6 +255,9 @@ private:
     bool m_attackLight;
     bool m_attackMedium;
     bool m_attackHeavy;
+
+    // 调试选项
+    bool m_showDebugHitboxes;  ///< 是否显示调试碰撞框
 };
 
 } // namespace SamuraiFight

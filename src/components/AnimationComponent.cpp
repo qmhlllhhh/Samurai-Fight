@@ -14,8 +14,8 @@ AnimationComponent::~AnimationComponent() {
 bool AnimationComponent::loadAnimation(const std::string &name, const AnimationData &data) {
     // 检查纹理是否已加载
     if (!ResourceManager::getInstance().hasTexture(data.spriteSheet)) {
-        // 加载纹理
-        if (!ResourceManager::getInstance().loadTexture(data.spriteSheet, data.spriteSheet, 1)) {
+        // 加载纹理（启用平滑插值以获得更好的放大效果）
+        if (!ResourceManager::getInstance().loadTexture(data.spriteSheet, data.spriteSheet, true)) {
             std::cerr << "AnimationComponent: Failed to load texture " << data.spriteSheet << std::endl;
             return false;
         }
@@ -139,6 +139,14 @@ void AnimationComponent::updateSpriteRect() {
 
     // 设置原点为底部中心
     m_sprite.setOrigin(sf::Vector2f(anim.frameWidth / 2.0f, anim.frameHeight));
+
+    // 计算缩放比例：从原始帧大小放大到目标大小
+    float scaleFactor = CHARACTER_TARGET_SIZE / static_cast<float>(anim.frameWidth);
+
+    // 保留当前的X方向符号（用于翻转），统一设置缩放
+    sf::Vector2f currentScale = m_sprite.getScale();
+    float signX = (currentScale.x >= 0) ? 1.0f : -1.0f;
+    m_sprite.setScale(sf::Vector2f(signX * scaleFactor, scaleFactor));
 }
 
 } // namespace SamuraiFight

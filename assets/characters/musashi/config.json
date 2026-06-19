@@ -11,11 +11,49 @@
         "moveStaminaCost": 0.1,
         "jumpStaminaCost": 10.0
     },
+    "attacks": {
+        "light": {
+            "damage": 10,
+            "startupFrames": 8,
+            "activeFrames": 4,
+            "recoveryFrames": 12,
+            "stunFrames": 8,
+            "staminaCost": 0,
+            "canCancel": false,
+            "cancelWindowStart": 0,
+            "cancelWindowEnd": 0,
+            "hitCount": 1
+        },
+        "medium": {
+            "damage": 15,
+            "startupFrames": 10,
+            "activeFrames": 5,
+            "recoveryFrames": 15,
+            "stunFrames": 12,
+            "staminaCost": 0,
+            "canCancel": false,
+            "cancelWindowStart": 0,
+            "cancelWindowEnd": 0,
+            "hitCount": 2
+        },
+        "heavy": {
+            "damage": 20,
+            "startupFrames": 8,
+            "activeFrames": 4,
+            "recoveryFrames": 12,
+            "stunFrames": 18,
+            "staminaCost": 0,
+            "canCancel": false,
+            "cancelWindowStart": 0,
+            "cancelWindowEnd": 0,
+            "hitCount": 3
+        }
+    },
     "animations": {
         "idle": {
             "spriteSheet": "assets/characters/musashi/idle.png",
             "frameCount": 6,
-            "frameDuration": 0.133,
+            "frameDuration": 0.1,
             "loop": true,
             "frameWidth": 128,
             "frameHeight": 128
@@ -35,34 +73,109 @@
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
+        },
+        "attack_light": {
+            "spriteSheet": "assets/characters/musashi/attack_1.png",
+            "frameCount": 4,
+            "frameDuration": 0.1,
+            "loop": false,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "attack_medium": {
+            "spriteSheet": "assets/characters/musashi/attack_2.png",
+            "frameCount": 5,
+            "frameDuration": 0.1,
+            "loop": false,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "attack_heavy": {
+            "spriteSheet": "assets/characters/musashi/attack_3.png",
+            "frameCount": 4,
+            "frameDuration": 0.1,
+            "loop": false,
+            "frameWidth": 128,
+            "frameHeight": 128
         }
     },
     "hitboxes": {
         "idle": [
             {
-                "x": -24,
-                "y": -108,
-                "width": 48,
-                "height": 100,
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
                 "type": "hurtbox"
             }
         ],
         "walk": [
             {
-                "x": -24,
-                "y": -108,
-                "width": 48,
-                "height": 100,
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
                 "type": "hurtbox"
             }
         ],
         "jump": [
             {
-                "x": -24,
-                "y": -108,
-                "width": 48,
-                "height": 100,
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
                 "type": "hurtbox"
+            }
+        ],
+        "attack_light": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
+            },
+            {
+                "x": 45,
+                "y": -180,
+                "width": 90,
+                "height": 60,
+                "type": "hitbox",
+                "activeFrames": [8, 9, 10, 11]
+            }
+        ],
+        "attack_medium": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
+            },
+            {
+                "x": 45,
+                "y": -180,
+                "width": 120,
+                "height": 75,
+                "type": "hitbox",
+                "activeFrames": [10, 11, 12, 13, 14]
+            }
+        ],
+        "attack_heavy": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
+            },
+            {
+                "x": 45,
+                "y": -195,
+                "width": 150,
+                "height": 90,
+                "type": "hitbox",
+                "activeFrames": [8, 9, 10, 11]
             }
         ]
     }

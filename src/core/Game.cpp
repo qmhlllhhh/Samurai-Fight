@@ -183,7 +183,7 @@ bool Game::createWindow() {
         m_window = std::make_unique<sf::RenderWindow>(
             videoMode,
             sf::String::fromUtf8(title.begin(), title.end()),
-            sf::Style::Resize | sf::Style::Close);
+            sf::Style::Titlebar | sf::Style::Close);
     }
 
     if (!m_window) {

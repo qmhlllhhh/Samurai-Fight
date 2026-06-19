@@ -2,6 +2,8 @@
 #include "../core/Constants.h"
 #include "../entities/CharacterFactory.h"
 #include "../managers/ResourceManager.h"
+#include "../states/AttackState.h"
+#include "../states/StateMachine.h"
 #include "PauseScene.h"
 #include <iostream>
 
@@ -115,6 +117,12 @@ void BattleScene::handleEvents(sf::RenderWindow &window) {
             case sf::Keyboard::Key::F1:
                 // 切换调试信息显示
                 m_showDebug = !m_showDebug;
+                // 同时切换角色的调试碰撞框显示
+                for (int i = 0; i < 2; ++i) {
+                    if (m_characters[i]) {
+                        m_characters[i]->setShowDebugHitboxes(m_showDebug);
+                    }
+                }
                 break;
 
             default:
@@ -151,6 +159,9 @@ void BattleScene::update(float deltaTime) {
             m_characters[i]->update(deltaTime);
         }
     }
+
+    // 检查碰撞
+    checkCollisions();
 
     // 更新调试文本
     if (m_showDebug && m_characters[0]) {
@@ -200,6 +211,99 @@ void BattleScene::render(sf::RenderWindow &window) {
     // 绘制调试信息
     if (m_showDebug && m_debugText) {
         window.draw(*m_debugText);
+    }
+}
+
+void BattleScene::checkCollisions() {
+    // 检查两个角色之间的攻击碰撞
+    if (m_characters[0] && m_characters[1]) {
+        checkAttackCollision(0, 1);
+        checkAttackCollision(1, 0);
+    }
+}
+
+void BattleScene::checkAttackCollision(int attacker, int defender) {
+    Character* attackerChar = m_characters[attacker].get();
+    Character* defenderChar = m_characters[defender].get();
+
+    if (!attackerChar || !defenderChar) return;
+
+    // 获取攻击者的状态机
+    StateMachine* stateMachine = attackerChar->getStateMachine();
+    if (!stateMachine) return;
+
+    // 检查是否在攻击状态
+    CharacterStateType stateType = attackerChar->getCurrentStateType();
+    if (stateType != CharacterStateType::AttackLight &&
+        stateType != CharacterStateType::AttackMedium &&
+        stateType != CharacterStateType::AttackHeavy) {
+        return;
+    }
+
+    // 获取攻击状态
+    AttackState* attackState = dynamic_cast<AttackState*>(stateMachine->getCurrentState());
+    if (!attackState) return;
+
+    // 检查是否还能命中（段数限制）
+    if (!attackState->canHit()) return;
+
+    // 获取攻击者的碰撞框组件
+    HitboxComponent* attackerHitbox = attackerChar->getHitboxComponent();
+    if (!attackerHitbox) return;
+
+    // 获取攻击者的攻击框
+    std::vector<Hitbox> attackBoxes = attackerHitbox->getHitboxes();
+    if (attackBoxes.empty()) return;
+
+    // 获取防御者的受击框组件
+    HitboxComponent* defenderHitbox = defenderChar->getHitboxComponent();
+    if (!defenderHitbox) return;
+
+    // 获取防御者的受击框
+    std::vector<Hitbox> hurtboxes = defenderHitbox->getHurtboxes();
+    if (hurtboxes.empty()) return;
+
+    // 检查每个攻击框是否与受击框相交
+    for (const auto& attackBox : attackBoxes) {
+        // 检查攻击框是否激活（通过activeFrames）
+        if (!attackBox.isActive()) continue;
+
+        for (const auto& hurtbox : hurtboxes) {
+            // 检查是否相交
+            if (attackBox.rect.findIntersection(hurtbox.rect)) {
+                // 命中！
+                // 获取攻击数据
+                const CharacterData& data = attackerChar->getData();
+
+                std::string attackType;
+                if (stateType == CharacterStateType::AttackLight) {
+                    attackType = "light";
+                } else if (stateType == CharacterStateType::AttackMedium) {
+                    attackType = "medium";
+                } else if (stateType == CharacterStateType::AttackHeavy) {
+                    attackType = "heavy";
+                }
+
+                auto it = data.attacks.find(attackType);
+                if (it != data.attacks.end()) {
+                    float damage = it->second.damage;
+                    int stunFrames = it->second.stunFrames;
+
+                    // 对防御者造成伤害
+                    defenderChar->takeDamage(damage, stunFrames);
+
+                    // 增加命中次数
+                    attackState->incrementHitCount();
+
+                    std::cout << "BattleScene: Player " << attacker + 1 << " hits Player " << defender + 1
+                              << " for " << damage << " damage! (Hit " << attackState->getCurrentHitCount()
+                              << "/" << attackState->getMaxHitCount() << ")" << std::endl;
+                }
+
+                // 一次判定只造成一次伤害，退出循环
+                return;
+            }
+        }
     }
 }
 
