@@ -1,15 +1,15 @@
 #include "Character.h"
 #include "../core/Constants.h"
 #include "../managers/ResourceManager.h"
-#include "../states/StateMachine.h"
 #include "../states/AttackState.h"
+#include "../states/StateMachine.h"
 
 #include <iostream>
 
 namespace SamuraiFight {
 
 Character::Character(const CharacterData &data, int playerIndex)
-    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false) {
+    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_health(nullptr), m_stamina(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false), m_pendingStunFrames(10) {
     // 设置初始位置
     float startX = (playerIndex == 0) ? 300.0f : WINDOW_WIDTH - 300.0f;
     setPosition(sf::Vector2f(startX, GROUND_LEVEL));
@@ -57,6 +57,12 @@ void Character::initializeComponents() {
     for (const auto &[state, hitboxData] : m_data.hitboxes) {
         m_hitbox->loadHitboxes(state, hitboxData);
     }
+
+    // 创建生命值组件
+    m_health = std::make_unique<HealthComponent>(m_data.stats.maxHp);
+
+    // 创建体力值组件
+    m_stamina = std::make_unique<StaminaComponent>(m_data.stats.maxStamina);
 
     // 创建输入缓冲
     m_inputBuffer = std::make_unique<InputBuffer>(INPUT_BUFFER_SIZE);
@@ -108,6 +114,12 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
     }
 
     // ========== 地面状态处理 ==========
+
+    // ========== 受击状态处理 ==========
+    if (currentState == CharacterStateType::Hurt) {
+        // 受击状态下不接受任何输入
+        return;
+    }
 
     // ========== 攻击状态处理 ==========
     bool isAttackState = (currentState == CharacterStateType::AttackLight ||
@@ -214,6 +226,9 @@ void Character::update(float deltaTime) {
     // 检测地面碰撞（在状态机更新之前）
     checkGroundCollision();
 
+    // 检测屏幕边界
+    checkScreenBounds();
+
     // 更新状态机
     if (m_stateMachine) {
         m_stateMachine->update(deltaTime);
@@ -244,27 +259,43 @@ void Character::update(float deltaTime) {
             break;
         case CharacterStateType::AttackLight:
         case CharacterStateType::AttackMedium:
-        case CharacterStateType::AttackHeavy:
-            {
-                // 攻击状态使用攻击帧数
-                AttackState* attackState = dynamic_cast<AttackState*>(m_stateMachine->getCurrentState());
-                if (attackState) {
-                    frame = attackState->getCurrentAttackFrame();
-                }
-                if (getCurrentStateType() == CharacterStateType::AttackLight) {
-                    stateName = "attack_light";
-                } else if (getCurrentStateType() == CharacterStateType::AttackMedium) {
-                    stateName = "attack_medium";
-                } else {
-                    stateName = "attack_heavy";
-                }
+        case CharacterStateType::AttackHeavy: {
+            // 攻击状态使用攻击帧数
+            AttackState *attackState = dynamic_cast<AttackState *>(m_stateMachine->getCurrentState());
+            if (attackState) {
+                frame = attackState->getCurrentAttackFrame();
             }
+            if (getCurrentStateType() == CharacterStateType::AttackLight) {
+                stateName = "attack_light";
+            } else if (getCurrentStateType() == CharacterStateType::AttackMedium) {
+                stateName = "attack_medium";
+            } else {
+                stateName = "attack_heavy";
+            }
+        } break;
+        case CharacterStateType::Hurt:
+            stateName = "hurt";
             break;
         default:
             stateName = "idle";
             break;
         }
         m_hitbox->update(m_position, stateName, frame, m_facingRight);
+    }
+
+    // 更新体力值
+    if (m_stamina) {
+        bool isMoving = (getCurrentStateType() == CharacterStateType::Move);
+        bool isJumping = (getCurrentStateType() == CharacterStateType::Jump);
+        bool isStanding = (getCurrentStateType() == CharacterStateType::Idle && m_onGround);
+
+        m_stamina->update(
+            isMoving,
+            isJumping,
+            isStanding,
+            m_data.stats.moveStaminaCost,
+            m_data.stats.staminaRecovery,
+            m_data.stats.jumpStaminaCost);
     }
 
     // 更新精灵位置
@@ -389,30 +420,96 @@ void Character::checkGroundCollision() {
     }
 }
 
-HitboxComponent* Character::getHitboxComponent() {
+void Character::checkScreenBounds() {
+    // 获取当前状态的碰撞框
+    std::string stateName;
+    switch (getCurrentStateType()) {
+    case CharacterStateType::Idle:
+        stateName = "idle";
+        break;
+    case CharacterStateType::Move:
+        stateName = "walk";
+        break;
+    case CharacterStateType::Jump:
+        stateName = "jump";
+        break;
+    case CharacterStateType::Crouch:
+        stateName = "crouch";
+        break;
+    case CharacterStateType::AttackLight:
+        stateName = "attack_light";
+        break;
+    case CharacterStateType::AttackMedium:
+        stateName = "attack_medium";
+        break;
+    case CharacterStateType::AttackHeavy:
+        stateName = "attack_heavy";
+        break;
+    case CharacterStateType::Hurt:
+        stateName = "hurt";
+        break;
+    default:
+        stateName = "idle";
+        break;
+    }
+
+    // 临时更新碰撞框位置以获取边界
+    if (m_hitbox) {
+        m_hitbox->update(m_position, stateName, getCurrentAnimationFrame(), m_facingRight);
+
+        // 获取所有受击框来确定角色边界
+        auto hurtboxes = m_hitbox->getHurtboxes();
+        if (!hurtboxes.empty()) {
+            // 计算角色的实际边界
+            float minX = m_position.x;
+            float maxX = m_position.x;
+
+            for (const auto& hurtbox : hurtboxes) {
+                float left = hurtbox.rect.position.x;
+                float right = left + hurtbox.rect.size.x;
+                minX = std::min(minX, left);
+                maxX = std::max(maxX, right);
+            }
+
+            // 检查左边界
+            if (minX < 0.0f) {
+                m_position.x -= minX;  // 修正到边界内
+            }
+
+            // 检查右边界
+            if (maxX > WINDOW_WIDTH) {
+                m_position.x -= (maxX - WINDOW_WIDTH);  // 修正到边界内
+            }
+        }
+    }
+}
+
+HitboxComponent *Character::getHitboxComponent() {
     return m_hitbox.get();
 }
 
-const HitboxComponent* Character::getHitboxComponent() const {
+const HitboxComponent *Character::getHitboxComponent() const {
     return m_hitbox.get();
 }
 
-StateMachine* Character::getStateMachine() {
+StateMachine *Character::getStateMachine() {
     return m_stateMachine.get();
 }
 
 bool Character::canCancelAttack() const {
-    if (!m_stateMachine) return false;
+    if (!m_stateMachine)
+        return false;
 
-    CharacterState* state = m_stateMachine->getCurrentState();
-    if (!state) return false;
+    CharacterState *state = m_stateMachine->getCurrentState();
+    if (!state)
+        return false;
 
     CharacterStateType type = state->getType();
     if (type == CharacterStateType::AttackLight ||
         type == CharacterStateType::AttackMedium ||
         type == CharacterStateType::AttackHeavy) {
         // 从AttackState获取取消信息
-        AttackState* attackState = dynamic_cast<AttackState*>(state);
+        AttackState *attackState = dynamic_cast<AttackState *>(state);
         if (attackState) {
             return attackState->canCancel();
         }
@@ -421,7 +518,8 @@ bool Character::canCancelAttack() const {
 }
 
 bool Character::isInAttackActiveFrames() const {
-    if (!m_stateMachine) return false;
+    if (!m_stateMachine)
+        return false;
 
     CharacterStateType type = getCurrentStateType();
     if (type != CharacterStateType::AttackLight &&
@@ -432,12 +530,63 @@ bool Character::isInAttackActiveFrames() const {
 
     // 需要从AttackState获取判定帧信息
     // 这里简化处理，实际应该dynamic_cast到AttackState
-    return false;  // 暂时返回false，后续优化
+    return false; // 暂时返回false，后续优化
 }
 
 void Character::takeDamage(float damage, int stunFrames) {
-    // TODO: 实现伤害处理和进入Hurt状态
-    std::cout << "Character " << m_data.name << " takes " << damage << " damage, stun for " << stunFrames << " frames" << std::endl;
+    if (!m_health)
+        return;
+
+    // 造成伤害
+    float actualDamage = m_health->takeDamage(damage);
+
+    if (actualDamage > 0.0f) {
+        std::cout << "Character " << m_data.name << " takes " << actualDamage << " damage"
+                  << " (HP: " << m_health->getCurrentHp() << "/" << m_health->getMaxHp() << ")"
+                  << ", stun for " << stunFrames << " frames" << std::endl;
+
+        // 如果死亡，进入胜利/失败状态（后续实现）
+        if (m_health->isDead()) {
+            std::cout << "Character " << m_data.name << " is dead!" << std::endl;
+            // TODO: 进入死亡状态
+        } else {
+            // 进入受击硬直状态
+            triggerHurt(stunFrames);
+        }
+    }
+}
+
+HealthComponent *Character::getHealthComponent() {
+    return m_health.get();
+}
+
+const HealthComponent *Character::getHealthComponent() const {
+    return m_health.get();
+}
+
+bool Character::isDead() const {
+    return m_health ? m_health->isDead() : false;
+}
+
+StaminaComponent *Character::getStaminaComponent() {
+    return m_stamina.get();
+}
+
+const StaminaComponent *Character::getStaminaComponent() const {
+    return m_stamina.get();
+}
+
+bool Character::isExhausted() const {
+    return m_stamina ? m_stamina->isExhausted() : false;
+}
+
+void Character::triggerHurt(int stunFrames) {
+    m_pendingStunFrames = stunFrames;
+    changeState(CharacterStateType::Hurt);
+}
+
+int Character::getPendingStunFrames() const {
+    return m_pendingStunFrames;
 }
 
 void Character::setShowDebugHitboxes(bool show) {

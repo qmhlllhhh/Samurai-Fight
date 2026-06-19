@@ -73,6 +73,40 @@ void BattleScene::initializeCharacters() {
     } else {
         std::cerr << "BattleScene: Failed to create player 2 character" << std::endl;
     }
+
+    // 初始化血条UI
+    // 玩家1血条在左上角，玩家2血条在右上角
+    float barWidth = 300.0f;
+    float barHeight = 25.0f;
+    float staminaBarHeight = 12.0f;
+    float barY = 30.0f;
+    float staminaBarY = barY + barHeight + 5.0f;  // 体力条在血条下方
+    float margin = 50.0f;
+
+    m_healthBars[0] = std::make_unique<HealthBar>(
+        sf::Vector2f(margin, barY),
+        sf::Vector2f(barWidth, barHeight),
+        true  // 玩家1
+    );
+
+    m_healthBars[1] = std::make_unique<HealthBar>(
+        sf::Vector2f(WINDOW_WIDTH - margin - barWidth, barY),
+        sf::Vector2f(barWidth, barHeight),
+        false  // 玩家2
+    );
+
+    // 初始化体力条UI
+    m_staminaBars[0] = std::make_unique<StaminaBar>(
+        sf::Vector2f(margin, staminaBarY),
+        sf::Vector2f(barWidth, staminaBarHeight),
+        true  // 玩家1
+    );
+
+    m_staminaBars[1] = std::make_unique<StaminaBar>(
+        sf::Vector2f(WINDOW_WIDTH - margin - barWidth, staminaBarY),
+        sf::Vector2f(barWidth, staminaBarHeight),
+        false  // 玩家2
+    );
 }
 
 void BattleScene::initializeBackground() {
@@ -163,6 +197,26 @@ void BattleScene::update(float deltaTime) {
     // 检查碰撞
     checkCollisions();
 
+    // 更新血条UI
+    for (int i = 0; i < 2; ++i) {
+        if (m_characters[i] && m_healthBars[i]) {
+            const HealthComponent* health = m_characters[i]->getHealthComponent();
+            if (health) {
+                m_healthBars[i]->update(health->getCurrentHp(), health->getMaxHp());
+            }
+        }
+    }
+
+    // 更新体力条UI
+    for (int i = 0; i < 2; ++i) {
+        if (m_characters[i] && m_staminaBars[i]) {
+            const StaminaComponent* stamina = m_characters[i]->getStaminaComponent();
+            if (stamina) {
+                m_staminaBars[i]->update(stamina->getCurrentStamina(), stamina->getMaxStamina());
+            }
+        }
+    }
+
     // 更新调试文本
     if (m_showDebug && m_characters[0]) {
         InputState input = m_inputManager->getPlayerInput(0);
@@ -205,6 +259,20 @@ void BattleScene::render(sf::RenderWindow &window) {
     for (int i = 0; i < 2; ++i) {
         if (m_characters[i]) {
             m_characters[i]->render(window);
+        }
+    }
+
+    // 绘制UI（血条）
+    for (int i = 0; i < 2; ++i) {
+        if (m_healthBars[i]) {
+            m_healthBars[i]->render(window);
+        }
+    }
+
+    // 绘制UI（体力条）
+    for (int i = 0; i < 2; ++i) {
+        if (m_staminaBars[i]) {
+            m_staminaBars[i]->render(window);
         }
     }
 

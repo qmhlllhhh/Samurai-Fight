@@ -5,6 +5,8 @@
 #include "../states/CharacterStateType.h"
 #include "../components/AnimationComponent.h"
 #include "../components/HitboxComponent.h"
+#include "../components/HealthComponent.h"
+#include "../components/StaminaComponent.h"
 #include "../input/InputBuffer.h"
 #include <memory>
 
@@ -199,6 +201,64 @@ public:
     void takeDamage(float damage, int stunFrames);
 
     /**
+     * @brief 获取生命值组件
+     *
+     * @return HealthComponent* 生命值组件指针
+     */
+    HealthComponent* getHealthComponent();
+
+    /**
+     * @brief 获取生命值组件（常量版本）
+     *
+     * @return const HealthComponent* 生命值组件指针
+     */
+    const HealthComponent* getHealthComponent() const;
+
+    /**
+     * @brief 检查是否死亡
+     *
+     * @return true 死亡
+     * @return false 存活
+     */
+    bool isDead() const;
+
+    /**
+     * @brief 获取体力值组件
+     *
+     * @return StaminaComponent* 体力值组件指针
+     */
+    StaminaComponent* getStaminaComponent();
+
+    /**
+     * @brief 获取体力值组件（常量版本）
+     *
+     * @return const StaminaComponent* 体力值组件指针
+     */
+    const StaminaComponent* getStaminaComponent() const;
+
+    /**
+     * @brief 检查体力是否耗尽
+     *
+     * @return true 体力耗尽
+     * @return false 还有体力
+     */
+    bool isExhausted() const;
+
+    /**
+     * @brief 触发受击状态
+     *
+     * @param stunFrames 硬直帧数
+     */
+    void triggerHurt(int stunFrames);
+
+    /**
+     * @brief 获取待处理的硬直帧数
+     *
+     * @return int 硬直帧数
+     */
+    int getPendingStunFrames() const;
+
+    /**
      * @brief 设置是否显示调试碰撞框
      *
      * @param show 是否显示
@@ -232,6 +292,11 @@ private:
     void checkGroundCollision();
 
     /**
+     * @brief 检测屏幕边界
+     */
+    void checkScreenBounds();
+
+    /**
      * @brief 更新输入缓冲
      */
     void updateInputBuffer();
@@ -240,6 +305,8 @@ private:
     std::unique_ptr<StateMachine> m_stateMachine;            ///< 状态机
     std::unique_ptr<AnimationComponent> m_animation;         ///< 动画组件
     std::unique_ptr<HitboxComponent> m_hitbox;               ///< 碰撞框组件
+    std::unique_ptr<HealthComponent> m_health;               ///< 生命值组件
+    std::unique_ptr<StaminaComponent> m_stamina;             ///< 体力值组件
     std::unique_ptr<InputBuffer> m_inputBuffer;              ///< 输入缓冲
 
     std::unique_ptr<sf::Sprite> m_sprite;                    ///< 精灵
@@ -258,6 +325,9 @@ private:
 
     // 调试选项
     bool m_showDebugHitboxes;  ///< 是否显示调试碰撞框
+
+    // 状态机参数
+    int m_pendingStunFrames;   ///< 待处理的硬直帧数（用于HurtState）
 };
 
 } // namespace SamuraiFight

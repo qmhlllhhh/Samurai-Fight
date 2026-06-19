@@ -1,10 +1,10 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include <unordered_map>
-#include <string>
 #include "../entities/CharacterData.h"
+#include <SFML/Graphics.hpp>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace SamuraiFight {
 
@@ -18,9 +18,9 @@ namespace SamuraiFight {
  * @brief 碰撞框结构
  */
 struct Hitbox {
-    sf::FloatRect rect;     ///< 碰撞矩形
-    std::string type;       ///< 类型 (hurtbox/hitbox)
-    int currentFrame;       ///< 当前帧（用于激活检查）
+    sf::FloatRect rect;            ///< 碰撞矩形
+    std::string type;              ///< 类型 (hurtbox/hitbox)
+    int currentFrame;              ///< 当前帧（用于激活检查）
     std::vector<int> activeFrames; ///< 激活帧列表
 
     /**
@@ -39,7 +39,7 @@ struct Hitbox {
  * 包含受击框（hurtbox）和攻击框（hitbox）
  */
 class HitboxComponent {
-public:
+  public:
     /**
      * @brief 构造函数
      */
@@ -56,7 +56,7 @@ public:
      * @param state 状态名称
      * @param hitboxData 碰撞框数据列表
      */
-    void loadHitboxes(const std::string& state, const std::vector<HitboxData>& hitboxData);
+    void loadHitboxes(const std::string &state, const std::vector<HitboxData> &hitboxData);
 
     /**
      * @brief 更新碰撞框位置
@@ -66,7 +66,7 @@ public:
      * @param frame 当前动画帧
      * @param facingRight 是否朝向右
      */
-    void update(const sf::Vector2f& position, const std::string& state, int frame, bool facingRight);
+    void update(const sf::Vector2f &position, const std::string &state, int frame, bool facingRight);
 
     /**
      * @brief 获取所有受击框
@@ -89,16 +89,16 @@ public:
      * @return true 相交
      * @return false 不相交
      */
-    bool intersects(const Hitbox& other) const;
+    bool intersects(const Hitbox &other) const;
 
     /**
      * @brief 调试渲染碰撞框
      *
      * @param window 游戏窗口
      */
-    void renderDebug(sf::RenderWindow& window);
+    void renderDebug(sf::RenderWindow &window);
 
-private:
+  private:
     std::unordered_map<std::string, std::vector<Hitbox>> m_hitboxesByState;
     std::vector<Hitbox> m_currentHitboxes;
     sf::Vector2f m_position;

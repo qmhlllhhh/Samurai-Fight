@@ -105,6 +105,14 @@
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
+        },
+        "hurt": {
+            "spriteSheet": "assets/characters/sakura/hurt.png",
+            "frameCount": 3,
+            "frameDuration": 0.1,
+            "loop": true,
+            "frameWidth": 128,
+            "frameHeight": 128
         }
     },
     "hitboxes": {
@@ -158,7 +166,20 @@
                 "width": 90,
                 "height": 60,
                 "type": "hitbox",
-                "activeFrames": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                "activeFrames": [
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23
+                ]
             }
         ],
         "attack_medium": [
@@ -175,7 +196,12 @@
                 "width": 120,
                 "height": 75,
                 "type": "hitbox",
-                "activeFrames": [8, 9, 10, 11]
+                "activeFrames": [
+                    8,
+                    9,
+                    10,
+                    11
+                ]
             }
         ],
         "attack_heavy": [
@@ -192,7 +218,19 @@
                 "width": 150,
                 "height": 90,
                 "type": "hitbox",
-                "activeFrames": [6, 7]
+                "activeFrames": [
+                    6,
+                    7
+                ]
+            }
+        ],
+        "hurt": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
             }
         ]
     }

@@ -97,6 +97,14 @@
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
+        },
+        "hurt": {
+            "spriteSheet": "assets/characters/musashi/hurt.png",
+            "frameCount": 3,
+            "frameDuration": 0.1,
+            "loop": true,
+            "frameWidth": 128,
+            "frameHeight": 128
         }
     },
     "hitboxes": {
@@ -141,7 +149,12 @@
                 "width": 90,
                 "height": 60,
                 "type": "hitbox",
-                "activeFrames": [8, 9, 10, 11]
+                "activeFrames": [
+                    8,
+                    9,
+                    10,
+                    11
+                ]
             }
         ],
         "attack_medium": [
@@ -158,7 +171,13 @@
                 "width": 120,
                 "height": 75,
                 "type": "hitbox",
-                "activeFrames": [10, 11, 12, 13, 14]
+                "activeFrames": [
+                    10,
+                    11,
+                    12,
+                    13,
+                    14
+                ]
             }
         ],
         "attack_heavy": [
@@ -175,7 +194,21 @@
                 "width": 150,
                 "height": 90,
                 "type": "hitbox",
-                "activeFrames": [8, 9, 10, 11]
+                "activeFrames": [
+                    8,
+                    9,
+                    10,
+                    11
+                ]
+            }
+        ],
+        "hurt": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
             }
         ]
     }

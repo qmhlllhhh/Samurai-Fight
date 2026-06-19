@@ -849,9 +849,9 @@ SamuraiFight/
 - [x] 输入缓冲系统
 - [ ] 连招系统
 - [x] 碰撞检测
-- [ ] 体力槽系统
+- [x] 体力槽系统
 - [ ] 防御系统
-- [ ] HurtState 实现
+- [x] HurtState 实现
 
 **交付物**：可进行基本对战的游戏
 
@@ -867,7 +867,7 @@ SamuraiFight/
 
 ### 阶段 5：UI 系统（第 7 周）
 
-- [ ] HealthBar, StaminaBar
+- [x] HealthBar, StaminaBar
 - [ ] Timer, ScoreDisplay
 - [ ] 角色选择界面
 - [x] 暂停菜单
