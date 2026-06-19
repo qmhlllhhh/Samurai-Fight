@@ -30,7 +30,9 @@ StaminaBar::StaminaBar(const sf::Vector2f& position, const sf::Vector2f& size, b
 StaminaBar::~StaminaBar() {
 }
 
-void StaminaBar::update(float currentStamina, float maxStamina) {
+void StaminaBar::update(float currentStamina, float maxStamina, float threshold) {
+    (void)threshold;  // 不再使用threshold参数
+
     if (maxStamina <= 0.0f) {
         m_currentPercent = 0.0f;
     } else {
@@ -55,10 +57,13 @@ void StaminaBar::update(float currentStamina, float maxStamina) {
     }
 
     // 根据体力值百分比改变颜色
-    if (m_currentPercent > 0.3f) {
-        m_fill->setFillColor(sf::Color(50, 150, 255));  // 蓝色（正常）
+    // 小于20%：红色，20%-50%：橙色，50%-100%：蓝色
+    if (m_currentPercent < 0.2f) {
+        m_fill->setFillColor(sf::Color(255, 50, 50));  // 红色（<20%）
+    } else if (m_currentPercent < 0.5f) {
+        m_fill->setFillColor(sf::Color(255, 150, 50));  // 橙色（20%-50%）
     } else {
-        m_fill->setFillColor(sf::Color(255, 150, 50));  // 橙色（低体力警告）
+        m_fill->setFillColor(sf::Color(50, 150, 255));  // 蓝色（50%-100%）
     }
 }
 

@@ -6,6 +6,7 @@
 #include "CrouchState.h"
 #include "AttackState.h"
 #include "HurtState.h"
+#include "BlockState.h"
 
 #include <iostream>
 
@@ -80,6 +81,8 @@ std::unique_ptr<CharacterState> StateMachine::createState(CharacterStateType sta
         return std::make_unique<AttackState>(m_owner, "heavy");
     case CharacterStateType::Hurt:
         return std::make_unique<HurtState>(m_owner, m_owner->getPendingStunFrames());
+    case CharacterStateType::Block:
+        return std::make_unique<BlockState>(m_owner);
     default:
         std::cerr << "StateMachine: Unknown state type " << static_cast<int>(stateType) << std::endl;
         return nullptr;

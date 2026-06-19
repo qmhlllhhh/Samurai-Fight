@@ -52,9 +52,10 @@ public:
      * @param attackLight 轻攻击
      * @param attackMedium 中攻击
      * @param attackHeavy 重攻击
+     * @param block 是否防御
      */
     void handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
-                     bool attackLight, bool attackMedium, bool attackHeavy);
+                     bool attackLight, bool attackMedium, bool attackHeavy, bool block = false);
 
     /**
      * @brief 更新角色逻辑
@@ -259,6 +260,29 @@ public:
     int getPendingStunFrames() const;
 
     /**
+     * @brief 设置防御冷却状态
+     *
+     * @param cooldown 是否在冷却中
+     */
+    void setBlockCooldown(bool cooldown);
+
+    /**
+     * @brief 检查是否在防御冷却中
+     *
+     * @return true 在冷却中
+     * @return false 不在冷却中
+     */
+    bool isInBlockCooldown() const;
+
+    /**
+     * @brief 检查是否可以进入防御状态
+     *
+     * @return true 可以防御
+     * @return false 不能防御
+     */
+    bool canBlock() const;
+
+    /**
      * @brief 设置是否显示调试碰撞框
      *
      * @param show 是否显示
@@ -328,6 +352,10 @@ private:
 
     // 状态机参数
     int m_pendingStunFrames;   ///< 待处理的硬直帧数（用于HurtState）
+
+    // 防御相关
+    bool m_blockCooldown;      ///< 是否在防御冷却中
+    int m_blockCooldownTimer;  ///< 防御冷却计时器（帧数）
 };
 
 } // namespace SamuraiFight

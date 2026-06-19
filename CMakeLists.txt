@@ -60,6 +60,8 @@ set(SOURCES
     src/states/CrouchState.cpp
     src/states/AttackState.cpp
     src/states/HurtState.cpp
+    src/states/BlockState.cpp
+    src/states/HurtState.cpp
 
     # Utils
     src/utils/JsonLoader.cpp

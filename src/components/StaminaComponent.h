@@ -88,13 +88,36 @@ public:
     bool isExhausted() const;
 
     /**
-     * @brief 检查是否有足够体力
+     * @brief 检查是否有足够体力进入状态
      *
      * @param amount 需要的体力值
      * @return true 有足够体力
      * @return false 体力不足
      */
     bool hasEnoughStamina(float amount) const;
+
+    /**
+     * @brief 检查体力值是否低于阈值（20%）
+     *
+     * @return true 低于阈值
+     * @return false 高于或等于阈值
+     */
+    bool isBelowThreshold() const;
+
+    /**
+     * @brief 获取体力阈值（20%）
+     *
+     * @return float 阈值
+     */
+    float getThreshold() const;
+
+    /**
+     * @brief 检查是否可以进入需要体力的状态（跳跃、防御）
+     *
+     * @return true 可以进入
+     * @return false 体力不足
+     */
+    bool canEnterStaminaState() const;
 
     /**
      * @brief 重置体力值到最大值
@@ -111,6 +134,7 @@ public:
 private:
     float m_currentStamina; ///< 当前体力值
     float m_maxStamina;     ///< 最大体力值
+    float m_threshold;      ///< 体力阈值（用于判断是否可以进入需要体力的状态）
     bool m_wasJumping;      ///< 上一帧是否跳跃（用于检测跳跃开始）
 };
 

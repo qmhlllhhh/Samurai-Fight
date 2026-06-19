@@ -9,7 +9,7 @@
 namespace SamuraiFight {
 
 Character::Character(const CharacterData &data, int playerIndex)
-    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_health(nullptr), m_stamina(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false), m_pendingStunFrames(10) {
+    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_health(nullptr), m_stamina(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false), m_pendingStunFrames(10), m_blockCooldown(false), m_blockCooldownTimer(0) {
     // 设置初始位置
     float startX = (playerIndex == 0) ? 300.0f : WINDOW_WIDTH - 300.0f;
     setPosition(sf::Vector2f(startX, GROUND_LEVEL));
@@ -72,7 +72,7 @@ void Character::initializeComponents() {
 }
 
 void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
-                            bool attackLight, bool attackMedium, bool attackHeavy) {
+                            bool attackLight, bool attackMedium, bool attackHeavy, bool block) {
 
     if (moveLeft && moveRight) {
         moveLeft = moveRight = 0;
@@ -121,6 +121,34 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         return;
     }
 
+    // ========== 防御状态处理 ==========
+    if (currentState == CharacterStateType::Block) {
+        // 松开防御键或体力耗尽时退出防御
+        if (!block) {
+            changeState(CharacterStateType::Idle);
+            return;
+        }
+        // 防御状态下允许移动，但不能改变朝向
+        if (moveLeft || moveRight) {
+            // 允许移动，但速度变慢（在update中处理）
+            float blockMoveSpeed = m_data.stats.moveSpeed * 0.5f; // 防御时移动速度50%
+            sf::Vector2f velocity = getVelocity();
+            if (moveLeft) {
+                velocity.x = -blockMoveSpeed;
+            } else if (moveRight) {
+                velocity.x = blockMoveSpeed;
+            }
+            setVelocity(velocity);
+        } else {
+            // 停止移动
+            sf::Vector2f velocity = getVelocity();
+            velocity.x = 0.0f;
+            setVelocity(velocity);
+        }
+        // 不改变朝向，不处理其他输入
+        return;
+    }
+
     // ========== 攻击状态处理 ==========
     bool isAttackState = (currentState == CharacterStateType::AttackLight ||
                           currentState == CharacterStateType::AttackMedium ||
@@ -149,6 +177,12 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
 
     // 地面攻击（站立或下蹲状态）
     if (m_onGround) {
+        // 防御（优先级低于攻击）
+        if (block && canBlock() && !m_blockCooldown) {
+            changeState(CharacterStateType::Block);
+            return;
+        }
+
         if (attackHeavy) {
             changeState(CharacterStateType::AttackHeavy);
             return;
@@ -163,10 +197,12 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         }
     }
 
-    // 跳跃优先级最高
+    // 跳跃优先级最高（需要体力大于20%阈值）
     if (jump && m_onGround && currentState != CharacterStateType::Jump) {
-        changeState(CharacterStateType::Jump);
-        return;
+        if (m_stamina && m_stamina->canEnterStaminaState()) {
+            changeState(CharacterStateType::Jump);
+            return;
+        }
     }
 
     // 下蹲
@@ -181,7 +217,7 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         return;
     }
 
-    // 移动
+    // 移动（不需要体力阈值限制）
     if ((moveLeft || moveRight) && m_onGround &&
         currentState != CharacterStateType::Move &&
         currentState != CharacterStateType::Crouch) {
@@ -214,11 +250,27 @@ void Character::update(float deltaTime) {
     // 更新帧计数
     m_frameCount++;
 
+    // 更新防御冷却
+    if (m_blockCooldown) {
+        m_blockCooldownTimer++;
+        // 冷却时间：60帧（1秒）
+        if (m_blockCooldownTimer >= 60) {
+            m_blockCooldown = false;
+            m_blockCooldownTimer = 0;
+        }
+    }
+
     // 更新输入缓冲
     updateInputBuffer();
 
     // 应用重力
     applyGravity(deltaTime);
+
+    // 防御冷却期间移动速度变慢（防御状态的速度已在handleInput中处理）
+    if (getCurrentStateType() != CharacterStateType::Block && m_blockCooldown) {
+        // 冷却期间移动速度为正常的70%
+        m_velocity.x *= 0.7f;
+    }
 
     // 更新位置
     m_position += m_velocity * deltaTime;
@@ -275,6 +327,9 @@ void Character::update(float deltaTime) {
         } break;
         case CharacterStateType::Hurt:
             stateName = "hurt";
+            break;
+        case CharacterStateType::Block:
+            stateName = "block";
             break;
         default:
             stateName = "idle";
@@ -464,7 +519,7 @@ void Character::checkScreenBounds() {
             float minX = m_position.x;
             float maxX = m_position.x;
 
-            for (const auto& hurtbox : hurtboxes) {
+            for (const auto &hurtbox : hurtboxes) {
                 float left = hurtbox.rect.position.x;
                 float right = left + hurtbox.rect.size.x;
                 minX = std::min(minX, left);
@@ -473,12 +528,12 @@ void Character::checkScreenBounds() {
 
             // 检查左边界
             if (minX < 0.0f) {
-                m_position.x -= minX;  // 修正到边界内
+                m_position.x -= minX; // 修正到边界内
             }
 
             // 检查右边界
             if (maxX > WINDOW_WIDTH) {
-                m_position.x -= (maxX - WINDOW_WIDTH);  // 修正到边界内
+                m_position.x -= (maxX - WINDOW_WIDTH); // 修正到边界内
             }
         }
     }
@@ -587,6 +642,25 @@ void Character::triggerHurt(int stunFrames) {
 
 int Character::getPendingStunFrames() const {
     return m_pendingStunFrames;
+}
+
+void Character::setBlockCooldown(bool cooldown) {
+    m_blockCooldown = cooldown;
+    if (cooldown) {
+        m_blockCooldownTimer = 0;
+    }
+}
+
+bool Character::isInBlockCooldown() const {
+    return m_blockCooldown;
+}
+
+bool Character::canBlock() const {
+    // 需要体力值大于20%阈值才能进入防御状态
+    if (m_stamina) {
+        return m_stamina->canEnterStaminaState();
+    }
+    return false;
 }
 
 void Character::setShowDebugHitboxes(bool show) {

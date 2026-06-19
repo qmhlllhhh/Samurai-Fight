@@ -35,8 +35,9 @@ public:
      *
      * @param currentStamina 当前体力值
      * @param maxStamina 最大体力值
+     * @param threshold 体力阈值（用于颜色变化）
      */
-    void update(float currentStamina, float maxStamina);
+    void update(float currentStamina, float maxStamina, float threshold = -1.0f);
 
     /**
      * @brief 渲染体力条

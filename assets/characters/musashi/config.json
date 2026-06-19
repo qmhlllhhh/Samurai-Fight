@@ -8,7 +8,7 @@
         "moveSpeed": 300.0,
         "jumpHeight": 400.0,
         "staminaRecovery": 0.5,
-        "moveStaminaCost": 0.1,
+        "moveStaminaCost": 0.0,
         "jumpStaminaCost": 10.0
     },
     "attacks": {
@@ -100,7 +100,15 @@
         },
         "hurt": {
             "spriteSheet": "assets/characters/musashi/hurt.png",
-            "frameCount": 3,
+            "frameCount": 1,
+            "frameDuration": 0.1,
+            "loop": true,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "block": {
+            "spriteSheet": "assets/characters/musashi/block.png",
+            "frameCount": 1,
             "frameDuration": 0.1,
             "loop": true,
             "frameWidth": 128,
@@ -203,6 +211,15 @@
             }
         ],
         "hurt": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
+            }
+        ],
+        "block": [
             {
                 "x": -45,
                 "y": -202.5,
