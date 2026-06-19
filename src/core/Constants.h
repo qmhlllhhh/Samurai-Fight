@@ -40,6 +40,12 @@ constexpr float BLOCK_DAMAGE_REDUCTION = 0.5f; // 防御时伤害减免50%
 constexpr int CHARACTER_WIDTH = 128;
 constexpr int CHARACTER_HEIGHT = 128;
 
+// 物理相关
+constexpr float GRAVITY = 800.0f;           // 重力加速度 (像素/秒²)
+constexpr float GROUND_LEVEL = 550.0f;      // 地面Y坐标
+constexpr float DEFAULT_MOVE_SPEED = 300.0f;  // 默认移动速度
+constexpr float DEFAULT_JUMP_HEIGHT = 400.0f; // 默认跳跃高度
+
 // 场景背景数量
 constexpr int BACKGROUND_COUNT = 5;
 

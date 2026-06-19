@@ -5,18 +5,13 @@
 
 namespace SamuraiFight {
 
-Game& Game::getInstance() {
+Game &Game::getInstance() {
     static Game instance;
     return instance;
 }
 
 Game::Game()
-    : m_window(nullptr)
-    , m_sceneManager(nullptr)
-    , m_configManager(nullptr)
-    , m_frameTimer(nullptr)
-    , m_initialized(false)
-    , m_running(false) {
+    : m_window(nullptr), m_sceneManager(nullptr), m_configManager(nullptr), m_frameTimer(nullptr), m_initialized(false), m_running(false) {
     std::cout << "Game: Instance created" << std::endl;
 }
 
@@ -49,6 +44,11 @@ bool Game::initialize() {
 
     // 创建帧计时器
     m_frameTimer = std::make_unique<FrameTimer>();
+
+    // 初始化角色工厂（单例）
+    if (!CharacterFactory::getInstance().initialize()) {
+        std::cerr << "Game: Warning - CharacterFactory initialization had issues" << std::endl;
+    }
 
     // 创建游戏窗口
     if (!createWindow()) {
@@ -130,25 +130,25 @@ void Game::shutdown() {
     std::cout << "Game: Shutdown complete" << std::endl;
 }
 
-sf::RenderWindow& Game::getWindow() {
+sf::RenderWindow &Game::getWindow() {
     if (!m_window) {
         throw std::runtime_error("Game: Window not available");
     }
     return *m_window;
 }
 
-ResourceManager& Game::getResourceManager() {
+ResourceManager &Game::getResourceManager() {
     return ResourceManager::getInstance();
 }
 
-SceneManager& Game::getSceneManager() {
+SceneManager &Game::getSceneManager() {
     if (!m_sceneManager) {
         throw std::runtime_error("Game: SceneManager not available");
     }
     return *m_sceneManager;
 }
 
-ConfigManager& Game::getConfigManager() {
+ConfigManager &Game::getConfigManager() {
     if (!m_configManager) {
         throw std::runtime_error("Game: ConfigManager not available");
     }
@@ -178,14 +178,12 @@ bool Game::createWindow() {
         m_window = std::make_unique<sf::RenderWindow>(
             videoMode,
             sf::String::fromUtf8(title.begin(), title.end()),
-            sf::Style::Resize | sf::Style::Close
-        );
+            sf::Style::Resize | sf::Style::Close);
     } else {
         m_window = std::make_unique<sf::RenderWindow>(
             videoMode,
             sf::String::fromUtf8(title.begin(), title.end()),
-            sf::Style::Resize | sf::Style::Close
-        );
+            sf::Style::Resize | sf::Style::Close);
     }
 
     if (!m_window) {

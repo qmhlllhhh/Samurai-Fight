@@ -3,10 +3,13 @@
 #include "../core/Constants.h"
 #include "../managers/SceneManager.h"
 #include "../utils/utils.h"
+#include "../entities/Character.h"
+#include "../input/InputManager.h"
 #include "Scene.h"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace SamuraiFight {
 
@@ -68,8 +71,26 @@ class BattleScene : public Scene {
     void render(sf::RenderWindow &window) override;
 
   private:
+    /**
+     * @brief 初始化角色
+     */
+    void initializeCharacters();
+
+    /**
+     * @brief 初始化背景
+     */
+    void initializeBackground();
+
     std::string m_backgroundId[BACKGROUND_COUNT];
     std::unique_ptr<sf::Sprite> m_background; ///< 战斗背景
     sf::RenderWindow *m_window;               ///< 游戏窗口指针
+
+    // 角色系统
+    std::unique_ptr<Character> m_characters[2];  ///< 两个角色
+    std::unique_ptr<InputManager> m_inputManager; ///< 输入管理器
+
+    // 调试信息
+    std::unique_ptr<sf::Text> m_debugText; ///< 调试文本
+    bool m_showDebug;     ///< 是否显示调试信息
 };
 } // namespace SamuraiFight
