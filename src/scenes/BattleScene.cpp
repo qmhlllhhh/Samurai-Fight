@@ -2,6 +2,9 @@
 #include "../core/Constants.h"
 #include "../entities/CharacterFactory.h"
 #include "../managers/ResourceManager.h"
+#include "../states/AttackState.h"
+#include "../states/BlockState.h"
+#include "../states/StateMachine.h"
 #include "PauseScene.h"
 #include <iostream>
 
@@ -71,6 +74,40 @@ void BattleScene::initializeCharacters() {
     } else {
         std::cerr << "BattleScene: Failed to create player 2 character" << std::endl;
     }
+
+    // 初始化血条UI
+    // 玩家1血条在左上角，玩家2血条在右上角
+    float barWidth = 300.0f;
+    float barHeight = 25.0f;
+    float staminaBarHeight = 12.0f;
+    float barY = 30.0f;
+    float staminaBarY = barY + barHeight + 5.0f; // 体力条在血条下方
+    float margin = 50.0f;
+
+    m_healthBars[0] = std::make_unique<HealthBar>(
+        sf::Vector2f(margin, barY),
+        sf::Vector2f(barWidth, barHeight),
+        true // 玩家1
+    );
+
+    m_healthBars[1] = std::make_unique<HealthBar>(
+        sf::Vector2f(WINDOW_WIDTH - margin - barWidth, barY),
+        sf::Vector2f(barWidth, barHeight),
+        false // 玩家2
+    );
+
+    // 初始化体力条UI
+    m_staminaBars[0] = std::make_unique<StaminaBar>(
+        sf::Vector2f(margin, staminaBarY),
+        sf::Vector2f(barWidth, staminaBarHeight),
+        true // 玩家1
+    );
+
+    m_staminaBars[1] = std::make_unique<StaminaBar>(
+        sf::Vector2f(WINDOW_WIDTH - margin - barWidth, staminaBarY),
+        sf::Vector2f(barWidth, staminaBarHeight),
+        false // 玩家2
+    );
 }
 
 void BattleScene::initializeBackground() {
@@ -115,6 +152,12 @@ void BattleScene::handleEvents(sf::RenderWindow &window) {
             case sf::Keyboard::Key::F1:
                 // 切换调试信息显示
                 m_showDebug = !m_showDebug;
+                // 同时切换角色的调试碰撞框显示
+                for (int i = 0; i < 2; ++i) {
+                    if (m_characters[i]) {
+                        m_characters[i]->setShowDebugHitboxes(m_showDebug);
+                    }
+                }
                 break;
 
             default:
@@ -140,7 +183,8 @@ void BattleScene::update(float deltaTime) {
                     input.crouch,
                     input.attackLight,
                     input.attackMedium,
-                    input.attackHeavy);
+                    input.attackHeavy,
+                    input.block);
             }
         }
     }
@@ -149,6 +193,31 @@ void BattleScene::update(float deltaTime) {
     for (int i = 0; i < 2; ++i) {
         if (m_characters[i]) {
             m_characters[i]->update(deltaTime);
+        }
+    }
+
+    // 检查碰撞
+    checkCollisions();
+
+    // 更新血条UI
+    for (int i = 0; i < 2; ++i) {
+        if (m_characters[i] && m_healthBars[i]) {
+            const HealthComponent *health = m_characters[i]->getHealthComponent();
+            if (health) {
+                m_healthBars[i]->update(health->getCurrentHp(), health->getMaxHp());
+            }
+        }
+    }
+
+    // 更新体力条UI
+    for (int i = 0; i < 2; ++i) {
+        if (m_characters[i] && m_staminaBars[i]) {
+            const StaminaComponent *stamina = m_characters[i]->getStaminaComponent();
+            if (stamina) {
+                m_staminaBars[i]->update(
+                    stamina->getCurrentStamina(),
+                    stamina->getMaxStamina());
+            }
         }
     }
 
@@ -197,9 +266,161 @@ void BattleScene::render(sf::RenderWindow &window) {
         }
     }
 
+    // 绘制UI（血条）
+    for (int i = 0; i < 2; ++i) {
+        if (m_healthBars[i]) {
+            m_healthBars[i]->render(window);
+        }
+    }
+
+    // 绘制UI（体力条）
+    for (int i = 0; i < 2; ++i) {
+        if (m_staminaBars[i]) {
+            m_staminaBars[i]->render(window);
+        }
+    }
+
     // 绘制调试信息
     if (m_showDebug && m_debugText) {
         window.draw(*m_debugText);
+    }
+}
+
+void BattleScene::checkCollisions() {
+    // 检查两个角色之间的攻击碰撞
+    if (m_characters[0] && m_characters[1]) {
+        checkAttackCollision(0, 1);
+        checkAttackCollision(1, 0);
+    }
+}
+
+void BattleScene::checkAttackCollision(int attacker, int defender) {
+    Character *attackerChar = m_characters[attacker].get();
+    Character *defenderChar = m_characters[defender].get();
+
+    if (!attackerChar || !defenderChar)
+        return;
+
+    // 获取攻击者的状态机
+    StateMachine *stateMachine = attackerChar->getStateMachine();
+    if (!stateMachine)
+        return;
+
+    // 检查是否在攻击状态
+    CharacterStateType stateType = attackerChar->getCurrentStateType();
+    if (stateType != CharacterStateType::AttackLight &&
+        stateType != CharacterStateType::AttackMedium &&
+        stateType != CharacterStateType::AttackHeavy) {
+        return;
+    }
+
+    // 获取攻击状态
+    AttackState *attackState = dynamic_cast<AttackState *>(stateMachine->getCurrentState());
+    if (!attackState)
+        return;
+
+    // 检查是否还能命中（段数限制）
+    if (!attackState->canHit())
+        return;
+
+    // 获取攻击者的碰撞框组件
+    HitboxComponent *attackerHitbox = attackerChar->getHitboxComponent();
+    if (!attackerHitbox)
+        return;
+
+    // 获取攻击者的攻击框
+    std::vector<Hitbox> attackBoxes = attackerHitbox->getHitboxes();
+    if (attackBoxes.empty())
+        return;
+
+    // 获取防御者的受击框组件
+    HitboxComponent *defenderHitbox = defenderChar->getHitboxComponent();
+    if (!defenderHitbox)
+        return;
+
+    // 获取防御者的受击框
+    std::vector<Hitbox> hurtboxes = defenderHitbox->getHurtboxes();
+    if (hurtboxes.empty())
+        return;
+
+    // 检查每个攻击框是否与受击框相交
+    for (const auto &attackBox : attackBoxes) {
+        // 检查攻击框是否激活（通过activeFrames）
+        if (!attackBox.isActive())
+            continue;
+
+        for (const auto &hurtbox : hurtboxes) {
+            // 检查是否相交
+            if (attackBox.rect.findIntersection(hurtbox.rect)) {
+                // 命中！检查防御者是否在防御状态
+                bool defenderIsBlocking = (defenderChar->getCurrentStateType() == CharacterStateType::Block);
+
+                if (defenderIsBlocking) {
+                    // 防御成功！攻击者陷入硬直
+                    const CharacterData &attackerData = attackerChar->getData();
+                    std::string attackType;
+                    if (stateType == CharacterStateType::AttackLight) {
+                        attackType = "light";
+                    } else if (stateType == CharacterStateType::AttackMedium) {
+                        attackType = "medium";
+                    } else if (stateType == CharacterStateType::AttackHeavy) {
+                        attackType = "heavy";
+                    }
+
+                    auto it = attackerData.attacks.find(attackType);
+                    int attackerStunFrames = 20; // 默认硬直帧
+                    if (it != attackerData.attacks.end()) {
+                        attackerStunFrames = it->second.stunFrames + 30; // 防御反击硬直更长
+                    }
+
+                    // 攻击者陷入硬直
+                    attackerChar->triggerHurt(attackerStunFrames);
+
+                    // 防御者解除防御（无冷却）
+                    BlockState *blockState = dynamic_cast<BlockState *>(defenderChar->getStateMachine()->getCurrentState());
+                    if (blockState) {
+                        blockState->onBlockHit(); // 标记为被打破，不会设置冷却
+                    }
+
+                    // 增加命中次数
+                    attackState->incrementHitCount();
+
+                    std::cout << "BattleScene: Player " << defender + 1 << " blocked attack from Player " << attacker + 1
+                              << "! Attacker stunned for " << attackerStunFrames << " frames." << std::endl;
+                } else {
+                    // 正常命中
+                    const CharacterData &data = attackerChar->getData();
+
+                    std::string attackType;
+                    if (stateType == CharacterStateType::AttackLight) {
+                        attackType = "light";
+                    } else if (stateType == CharacterStateType::AttackMedium) {
+                        attackType = "medium";
+                    } else if (stateType == CharacterStateType::AttackHeavy) {
+                        attackType = "heavy";
+                    }
+
+                    auto it = data.attacks.find(attackType);
+                    if (it != data.attacks.end()) {
+                        float damage = it->second.damage;
+                        int stunFrames = it->second.stunFrames;
+
+                        // 对防御者造成伤害
+                        defenderChar->takeDamage(damage, stunFrames);
+
+                        // 增加命中次数
+                        attackState->incrementHitCount();
+
+                        std::cout << "BattleScene: Player " << attacker + 1 << " hits Player " << defender + 1
+                                  << " for " << damage << " damage! (Hit " << attackState->getCurrentHitCount()
+                                  << "/" << attackState->getMaxHitCount() << ")" << std::endl;
+                    }
+                }
+
+                // 一次判定只造成一次伤害，退出循环
+                return;
+            }
+        }
     }
 }
 

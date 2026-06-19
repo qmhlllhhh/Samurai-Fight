@@ -23,15 +23,14 @@ HitboxComponent::HitboxComponent()
 HitboxComponent::~HitboxComponent() {
 }
 
-void HitboxComponent::loadHitboxes(const std::string& state, const std::vector<HitboxData>& hitboxData) {
+void HitboxComponent::loadHitboxes(const std::string &state, const std::vector<HitboxData> &hitboxData) {
     std::vector<Hitbox> hitboxes;
 
-    for (const auto& data : hitboxData) {
+    for (const auto &data : hitboxData) {
         Hitbox hitbox;
         hitbox.rect = sf::FloatRect(
             sf::Vector2f(data.x, data.y),
-            sf::Vector2f(data.width, data.height)
-        );
+            sf::Vector2f(data.width, data.height));
         hitbox.type = data.type;
         hitbox.activeFrames = data.activeFrames;
         hitbox.currentFrame = 0;
@@ -41,7 +40,7 @@ void HitboxComponent::loadHitboxes(const std::string& state, const std::vector<H
     m_hitboxesByState[state] = hitboxes;
 }
 
-void HitboxComponent::update(const sf::Vector2f& position, const std::string& state, int frame, bool facingRight) {
+void HitboxComponent::update(const sf::Vector2f &position, const std::string &state, int frame, bool facingRight) {
     m_position = position;
     m_facingRight = facingRight;
 
@@ -56,7 +55,7 @@ void HitboxComponent::update(const sf::Vector2f& position, const std::string& st
     m_currentHitboxes = it->second;
 
     // 更新碰撞框位置
-    for (auto& hitbox : m_currentHitboxes) {
+    for (auto &hitbox : m_currentHitboxes) {
         hitbox.currentFrame = frame;
 
         // 根据朝向调整位置
@@ -72,7 +71,7 @@ void HitboxComponent::update(const sf::Vector2f& position, const std::string& st
 
 std::vector<Hitbox> HitboxComponent::getHurtboxes() const {
     std::vector<Hitbox> hurtboxes;
-    for (const auto& hitbox : m_currentHitboxes) {
+    for (const auto &hitbox : m_currentHitboxes) {
         if (hitbox.type == "hurtbox" && hitbox.isActive()) {
             hurtboxes.push_back(hitbox);
         }
@@ -82,7 +81,7 @@ std::vector<Hitbox> HitboxComponent::getHurtboxes() const {
 
 std::vector<Hitbox> HitboxComponent::getHitboxes() const {
     std::vector<Hitbox> hitboxes;
-    for (const auto& hitbox : m_currentHitboxes) {
+    for (const auto &hitbox : m_currentHitboxes) {
         if (hitbox.type == "hitbox" && hitbox.isActive()) {
             hitboxes.push_back(hitbox);
         }
@@ -90,8 +89,8 @@ std::vector<Hitbox> HitboxComponent::getHitboxes() const {
     return hitboxes;
 }
 
-bool HitboxComponent::intersects(const Hitbox& other) const {
-    for (const auto& hitbox : m_currentHitboxes) {
+bool HitboxComponent::intersects(const Hitbox &other) const {
+    for (const auto &hitbox : m_currentHitboxes) {
         if (hitbox.isActive() && hitbox.rect.findIntersection(other.rect)) {
             return true;
         }
@@ -99,19 +98,20 @@ bool HitboxComponent::intersects(const Hitbox& other) const {
     return false;
 }
 
-void HitboxComponent::renderDebug(sf::RenderWindow& window) {
-    for (const auto& hitbox : m_currentHitboxes) {
-        if (!hitbox.isActive()) continue;
+void HitboxComponent::renderDebug(sf::RenderWindow &window) {
+    for (const auto &hitbox : m_currentHitboxes) {
+        if (!hitbox.isActive())
+            continue;
 
         sf::RectangleShape shape;
         shape.setPosition(hitbox.rect.position);
         shape.setSize(hitbox.rect.size);
 
         if (hitbox.type == "hurtbox") {
-            shape.setFillColor(sf::Color(0, 255, 0, 50));  // 绿色半透明
+            shape.setFillColor(sf::Color(0, 255, 0, 50)); // 绿色半透明
             shape.setOutlineColor(sf::Color(0, 255, 0));
         } else {
-            shape.setFillColor(sf::Color(255, 0, 0, 50));  // 红色半透明
+            shape.setFillColor(sf::Color(255, 0, 0, 50)); // 红色半透明
             shape.setOutlineColor(sf::Color(255, 0, 0));
         }
         shape.setOutlineThickness(2.0f);

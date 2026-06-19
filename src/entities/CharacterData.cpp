@@ -63,6 +63,24 @@ bool CharacterData::loadFromJson(const std::string& jsonPath) {
             }
         }
 
+        // 加载攻击数据
+        if (json.contains("attacks")) {
+            for (const auto& [key, attackJson] : json["attacks"].items()) {
+                AttackData attack;
+                attack.damage = attackJson.value("damage", 10.0f);
+                attack.startupFrames = attackJson.value("startupFrames", 3);
+                attack.activeFrames = attackJson.value("activeFrames", 2);
+                attack.recoveryFrames = attackJson.value("recoveryFrames", 5);
+                attack.stunFrames = attackJson.value("stunFrames", 8);
+                attack.staminaCost = attackJson.value("staminaCost", 0.0f);
+                attack.canCancel = attackJson.value("canCancel", true);
+                attack.cancelWindowStart = attackJson.value("cancelWindowStart", 2);
+                attack.cancelWindowEnd = attackJson.value("cancelWindowEnd", 5);
+                attack.hitCount = attackJson.value("hitCount", 1);
+                attacks[key] = attack;
+            }
+        }
+
         std::cout << "CharacterData: Loaded character " << id << " from " << jsonPath << std::endl;
         return true;
 

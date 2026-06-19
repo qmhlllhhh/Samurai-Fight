@@ -48,6 +48,8 @@ set(SOURCES
     # Components
     src/components/AnimationComponent.cpp
     src/components/HitboxComponent.cpp
+    src/components/HealthComponent.cpp
+    src/components/StaminaComponent.cpp
 
     # States
     src/states/CharacterState.cpp
@@ -56,6 +58,10 @@ set(SOURCES
     src/states/MoveState.cpp
     src/states/JumpState.cpp
     src/states/CrouchState.cpp
+    src/states/AttackState.cpp
+    src/states/HurtState.cpp
+    src/states/BlockState.cpp
+    src/states/HurtState.cpp
 
     # Utils
     src/utils/JsonLoader.cpp
@@ -63,6 +69,10 @@ set(SOURCES
     # Input
     src/input/InputManager.cpp
     src/input/InputBuffer.cpp
+
+    # UI
+    src/ui/HealthBar.cpp
+    src/ui/StaminaBar.cpp
 )
 
 # 头文件目录

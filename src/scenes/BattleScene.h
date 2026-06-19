@@ -5,6 +5,8 @@
 #include "../utils/utils.h"
 #include "../entities/Character.h"
 #include "../input/InputManager.h"
+#include "../ui/HealthBar.h"
+#include "../ui/StaminaBar.h"
 #include "Scene.h"
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -81,6 +83,19 @@ class BattleScene : public Scene {
      */
     void initializeBackground();
 
+    /**
+     * @brief 检查角色间的碰撞
+     */
+    void checkCollisions();
+
+    /**
+     * @brief 检查两个角色的攻击碰撞
+     *
+     * @param attacker 攻击者索引
+     * @param defender 防御者索引
+     */
+    void checkAttackCollision(int attacker, int defender);
+
     std::string m_backgroundId[BACKGROUND_COUNT];
     std::unique_ptr<sf::Sprite> m_background; ///< 战斗背景
     sf::RenderWindow *m_window;               ///< 游戏窗口指针
@@ -88,6 +103,10 @@ class BattleScene : public Scene {
     // 角色系统
     std::unique_ptr<Character> m_characters[2];  ///< 两个角色
     std::unique_ptr<InputManager> m_inputManager; ///< 输入管理器
+
+    // UI
+    std::unique_ptr<HealthBar> m_healthBars[2];  ///< 两个玩家的血条
+    std::unique_ptr<StaminaBar> m_staminaBars[2]; ///< 两个玩家的体力条
 
     // 调试信息
     std::unique_ptr<sf::Text> m_debugText; ///< 调试文本

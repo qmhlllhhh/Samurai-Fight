@@ -832,26 +832,26 @@ SamuraiFight/
 
 **交付物**：可运行的主菜单窗口 ✅
 
-### 阶段 2：角色系统（第 2-3 周）
+### 阶段 2：角色系统（第 2-3 周）✅已完成
 
-- [ ] Character 类实现
-- [ ] 状态机框架
-- [ ] 基础状态（Idle, Move, Jump, Crouch）
-- [ ] AnimationComponent
-- [ ] JSON 角色数据加载
-- [ ] HitboxComponent
+- [x] Character 类实现
+- [x] 状态机框架
+- [x] 基础状态（Idle, Move, Jump, Crouch）
+- [x] AnimationComponent
+- [x] JSON 角色数据加载
+- [x] HitboxComponent
 
-**交付物**：可在场景中移动、跳跃的角色
+**交付物**：可在场景中移动、跳跃的角色✅
 
 ### 阶段 3：战斗系统（第 4-5 周）
 
-- [ ] AttackState 实现
-- [ ] 输入缓冲系统
+- [x] AttackState 实现
+- [x] 输入缓冲系统
 - [ ] 连招系统
-- [ ] 碰撞检测
-- [ ] 体力槽系统
+- [x] 碰撞检测
+- [x] 体力槽系统
 - [ ] 防御系统
-- [ ] HurtState 实现
+- [x] HurtState 实现
 
 **交付物**：可进行基本对战的游戏
 
@@ -867,7 +867,7 @@ SamuraiFight/
 
 ### 阶段 5：UI 系统（第 7 周）
 
-- [ ] HealthBar, StaminaBar
+- [x] HealthBar, StaminaBar
 - [ ] Timer, ScoreDisplay
 - [ ] 角色选择界面
 - [x] 暂停菜单

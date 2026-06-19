@@ -39,6 +39,30 @@ struct HitboxData {
 };
 
 /**
+ * @struct AttackData
+ * @brief 攻击帧数据
+ */
+struct AttackData {
+    float damage = 10.0f;           ///< 伤害值
+    int startupFrames = 3;          ///< 前摇帧数
+    int activeFrames = 2;           ///< 判定帧数（伤害激活）
+    int recoveryFrames = 5;         ///< 后摇帧数
+    int stunFrames = 8;             ///< 对手硬直帧数
+    float staminaCost = 0.0f;       ///< 体力消耗
+    bool canCancel = true;          ///< 是否可取消
+    int cancelWindowStart = 2;      ///< 取消窗口开始帧
+    int cancelWindowEnd = 5;        ///< 取消窗口结束帧
+    int hitCount = 1;               ///< 段数（判定帧期间最大命中次数）
+
+    /**
+     * @brief 获取攻击总帧数
+     */
+    int getTotalFrames() const {
+        return startupFrames + activeFrames + recoveryFrames;
+    }
+};
+
+/**
  * @struct StatsData
  * @brief 角色属性数据
  */
@@ -65,6 +89,7 @@ struct CharacterData {
 
     std::unordered_map<std::string, AnimationData> animations;  ///< 动画数据
     std::unordered_map<std::string, std::vector<HitboxData>> hitboxes; ///< 碰撞框数据
+    std::unordered_map<std::string, AttackData> attacks;  ///< 攻击数据 (light, medium, heavy)
 
     /**
      * @brief 默认构造函数

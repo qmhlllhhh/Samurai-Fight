@@ -12,14 +12,16 @@ namespace SamuraiFight {
  * @brief 角色状态类型
  */
 enum class CharacterStateType {
-    Idle,       ///< 站立
-    Move,       ///< 移动
-    Jump,       ///< 跳跃
-    Crouch,     ///< 下蹲
-    Attack,     ///< 攻击（阶段3）
-    Block,      ///< 防御（阶段3）
-    Hurt,       ///< 受击（阶段3）
-    Victory     ///< 胜利（阶段4）
+    Idle,           ///< 站立
+    Move,           ///< 移动
+    Jump,           ///< 跳跃
+    Crouch,         ///< 下蹲
+    AttackLight,    ///< 轻攻击
+    AttackMedium,   ///< 中攻击
+    AttackHeavy,    ///< 重攻击
+    Block,          ///< 防御
+    Hurt,           ///< 受击
+    Victory         ///< 胜利
 };
 
 } // namespace SamuraiFight
