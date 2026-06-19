@@ -36,9 +36,33 @@ set(SOURCES
     # Scenes
     src/scenes/Scene.cpp
     src/scenes/MainMenuScene.cpp
+    src/scenes/BattleScene.cpp
+    src/scenes/PauseScene.cpp
+
+    # Entities
+    src/entities/Entity.cpp
+    src/entities/CharacterData.cpp
+    src/entities/Character.cpp
+    src/entities/CharacterFactory.cpp
+
+    # Components
+    src/components/AnimationComponent.cpp
+    src/components/HitboxComponent.cpp
+
+    # States
+    src/states/CharacterState.cpp
+    src/states/StateMachine.cpp
+    src/states/IdleState.cpp
+    src/states/MoveState.cpp
+    src/states/JumpState.cpp
+    src/states/CrouchState.cpp
 
     # Utils
     src/utils/JsonLoader.cpp
+
+    # Input
+    src/input/InputManager.cpp
+    src/input/InputBuffer.cpp
 )
 
 # 头文件目录

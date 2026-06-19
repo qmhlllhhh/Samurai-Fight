@@ -5,7 +5,7 @@
 
 namespace SamuraiFight {
 
-ResourceManager& ResourceManager::getInstance() {
+ResourceManager &ResourceManager::getInstance() {
     static ResourceManager instance;
     return instance;
 }
@@ -31,11 +31,25 @@ bool ResourceManager::initialize() {
         }
     }
 
+    // 尝试加载背景图
+    std::string grass1Path = "assets/backgrounds/grass1.png";
+    std::string grass2Path = "assets/backgrounds/grass2.png";
+    std::string grass3Path = "assets/backgrounds/grass3.png";
+    std::string forestPath = "assets/backgrounds/forest.png";
+    std::string housePath = "assets/backgrounds/house.png";
+    if (!loadTexture("grass1", grass1Path, 1) ||
+        !loadTexture("grass2", grass2Path, 1) ||
+        !loadTexture("grass3", grass3Path, 1) ||
+        !loadTexture("forest", forestPath, 1) ||
+        !loadTexture("house", housePath, 1)) {
+        std::cerr << "ResourceManager: Warning: Some background textures failed to load" << std::endl;
+    }
+
     std::cout << "ResourceManager: Initialized successfully" << std::endl;
     return true;
 }
 
-bool ResourceManager::loadTexture(const std::string& id, const std::string& path) {
+bool ResourceManager::loadTexture(const std::string &id, const std::string &path, bool smooth) {
     // 检查是否已经加载
     if (hasTexture(id)) {
         std::cout << "ResourceManager: Texture '" << id << "' already loaded" << std::endl;
@@ -49,13 +63,15 @@ bool ResourceManager::loadTexture(const std::string& id, const std::string& path
         return false;
     }
 
+    texture.setSmooth(smooth);
+
     // 存储纹理
     m_textures[id] = std::move(texture);
     std::cout << "ResourceManager: Loaded texture '" << id << "' from " << path << std::endl;
     return true;
 }
 
-const sf::Texture& ResourceManager::getTexture(const std::string& id) const {
+const sf::Texture &ResourceManager::getTexture(const std::string &id) const {
     auto it = m_textures.find(id);
     if (it == m_textures.end()) {
         throw std::out_of_range("ResourceManager: Texture '" + id + "' not found");
@@ -63,11 +79,11 @@ const sf::Texture& ResourceManager::getTexture(const std::string& id) const {
     return it->second;
 }
 
-bool ResourceManager::hasTexture(const std::string& id) const {
+bool ResourceManager::hasTexture(const std::string &id) const {
     return m_textures.find(id) != m_textures.end();
 }
 
-bool ResourceManager::loadFont(const std::string& id, const std::string& path) {
+bool ResourceManager::loadFont(const std::string &id, const std::string &path) {
     // 检查是否已经加载
     if (hasFont(id)) {
         std::cout << "ResourceManager: Font '" << id << "' already loaded" << std::endl;
@@ -87,7 +103,7 @@ bool ResourceManager::loadFont(const std::string& id, const std::string& path) {
     return true;
 }
 
-const sf::Font& ResourceManager::getFont(const std::string& id) const {
+const sf::Font &ResourceManager::getFont(const std::string &id) const {
     auto it = m_fonts.find(id);
     if (it == m_fonts.end()) {
         throw std::out_of_range("ResourceManager: Font '" + id + "' not found");
@@ -95,11 +111,11 @@ const sf::Font& ResourceManager::getFont(const std::string& id) const {
     return it->second;
 }
 
-bool ResourceManager::hasFont(const std::string& id) const {
+bool ResourceManager::hasFont(const std::string &id) const {
     return m_fonts.find(id) != m_fonts.end();
 }
 
-const sf::Font& ResourceManager::getDefaultFont() const {
+const sf::Font &ResourceManager::getDefaultFont() const {
     if (hasFont(m_defaultFontId)) {
         return getFont(m_defaultFontId);
     }
@@ -112,7 +128,7 @@ const sf::Font& ResourceManager::getDefaultFont() const {
     throw std::runtime_error("ResourceManager: No fonts available");
 }
 
-bool ResourceManager::loadSoundBuffer(const std::string& id, const std::string& path) {
+bool ResourceManager::loadSoundBuffer(const std::string &id, const std::string &path) {
     // 检查是否已经加载
     if (hasSoundBuffer(id)) {
         std::cout << "ResourceManager: Sound buffer '" << id << "' already loaded" << std::endl;
@@ -132,7 +148,7 @@ bool ResourceManager::loadSoundBuffer(const std::string& id, const std::string& 
     return true;
 }
 
-const sf::SoundBuffer& ResourceManager::getSoundBuffer(const std::string& id) const {
+const sf::SoundBuffer &ResourceManager::getSoundBuffer(const std::string &id) const {
     auto it = m_soundBuffers.find(id);
     if (it == m_soundBuffers.end()) {
         throw std::out_of_range("ResourceManager: Sound buffer '" + id + "' not found");
@@ -140,7 +156,7 @@ const sf::SoundBuffer& ResourceManager::getSoundBuffer(const std::string& id) co
     return it->second;
 }
 
-bool ResourceManager::hasSoundBuffer(const std::string& id) const {
+bool ResourceManager::hasSoundBuffer(const std::string &id) const {
     return m_soundBuffers.find(id) != m_soundBuffers.end();
 }
 
@@ -151,7 +167,7 @@ void ResourceManager::clear() {
     std::cout << "ResourceManager: All resources cleared" << std::endl;
 }
 
-void ResourceManager::removeTexture(const std::string& id) {
+void ResourceManager::removeTexture(const std::string &id) {
     auto it = m_textures.find(id);
     if (it != m_textures.end()) {
         m_textures.erase(it);
@@ -159,7 +175,7 @@ void ResourceManager::removeTexture(const std::string& id) {
     }
 }
 
-void ResourceManager::removeFont(const std::string& id) {
+void ResourceManager::removeFont(const std::string &id) {
     auto it = m_fonts.find(id);
     if (it != m_fonts.end()) {
         m_fonts.erase(it);
@@ -167,7 +183,7 @@ void ResourceManager::removeFont(const std::string& id) {
     }
 }
 
-void ResourceManager::removeSoundBuffer(const std::string& id) {
+void ResourceManager::removeSoundBuffer(const std::string &id) {
     auto it = m_soundBuffers.find(id);
     if (it != m_soundBuffers.end()) {
         m_soundBuffers.erase(it);
@@ -184,10 +200,9 @@ bool ResourceManager::createDefaultFont() {
         "C:/Windows/Fonts/arial.ttf",
         "C:/Windows/Fonts/calibri.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/System/Library/Fonts/Helvetica.ttc"
-    };
+        "/System/Library/Fonts/Helvetica.ttc"};
 
-    for (const auto& path : systemFontPaths) {
+    for (const auto &path : systemFontPaths) {
         sf::Font font;
         if (font.openFromFile(path)) {
             m_fonts[m_defaultFontId] = std::move(font);

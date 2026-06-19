@@ -1,0 +1,86 @@
+{
+    "id": "sakura",
+    "name": "樱",
+    "description": "敏捷型武士，擅长剑术",
+    "stats": {
+        "maxHp": 100,
+        "maxStamina": 100,
+        "moveSpeed": 300.0,
+        "jumpHeight": 400.0,
+        "staminaRecovery": 0.5,
+        "moveStaminaCost": 0.1,
+        "jumpStaminaCost": 10.0
+    },
+    "animations": {
+        "idle": {
+            "spriteSheet": "assets/characters/sakura/idle.png",
+            "frameCount": 6,
+            "frameDuration": 0.133,
+            "loop": true,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "walk": {
+            "spriteSheet": "assets/characters/sakura/walk.png",
+            "frameCount": 8,
+            "frameDuration": 0.1,
+            "loop": true,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "jump": {
+            "spriteSheet": "assets/characters/sakura/jump.png",
+            "frameCount": 12,
+            "frameDuration": 0.1,
+            "loop": false,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "crouch": {
+            "spriteSheet": "assets/characters/sakura/couch.png",
+            "frameCount": 6,
+            "frameDuration": 0.2,
+            "loop": true,
+            "frameWidth": 128,
+            "frameHeight": 128
+        }
+    },
+    "hitboxes": {
+        "idle": [
+            {
+                "x": -24,
+                "y": -108,
+                "width": 48,
+                "height": 100,
+                "type": "hurtbox"
+            }
+        ],
+        "walk": [
+            {
+                "x": -24,
+                "y": -108,
+                "width": 48,
+                "height": 100,
+                "type": "hurtbox"
+            }
+        ],
+        "jump": [
+            {
+                "x": -24,
+                "y": -108,
+                "width": 48,
+                "height": 100,
+                "type": "hurtbox"
+            }
+        ],
+        "crouch": [
+            {
+                "x": -24,
+                "y": -60,
+                "width": 48,
+                "height": 60,
+                "type": "hurtbox"
+            }
+        ]
+    }
+}

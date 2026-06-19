@@ -1,12 +1,13 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <memory>
+#include "../entities/CharacterFactory.h"
+#include "../managers/ConfigManager.h"
 #include "../managers/ResourceManager.h"
 #include "../managers/SceneManager.h"
-#include "../managers/ConfigManager.h"
-#include "FrameTimer.h"
 #include "Constants.h"
+#include "FrameTimer.h"
+#include <SFML/Graphics.hpp>
+#include <memory>
 
 namespace SamuraiFight {
 
@@ -28,13 +29,13 @@ namespace SamuraiFight {
  * - 游戏主循环
  */
 class Game {
-public:
+  public:
     /**
      * @brief 获取单例实例
      *
      * @return Game& 单例实例引用
      */
-    static Game& getInstance();
+    static Game &getInstance();
 
     /**
      * @brief 初始化游戏
@@ -61,28 +62,28 @@ public:
      *
      * @return sf::RenderWindow& 窗口引用
      */
-    sf::RenderWindow& getWindow();
+    sf::RenderWindow &getWindow();
 
     /**
      * @brief 获取资源管理器
      *
      * @return ResourceManager& 资源管理器引用
      */
-    ResourceManager& getResourceManager();
+    ResourceManager &getResourceManager();
 
     /**
      * @brief 获取场景管理器
      *
      * @return SceneManager& 场景管理器引用
      */
-    SceneManager& getSceneManager();
+    SceneManager &getSceneManager();
 
     /**
      * @brief 获取配置管理器
      *
      * @return ConfigManager& 配置管理器引用
      */
-    ConfigManager& getConfigManager();
+    ConfigManager &getConfigManager();
 
     /**
      * @brief 检查游戏是否正在运行
@@ -97,7 +98,7 @@ public:
      */
     void stop();
 
-private:
+  private:
     /**
      * @brief 私有构造函数（单例模式）
      */
@@ -109,10 +110,10 @@ private:
     ~Game();
 
     // 禁用拷贝和移动
-    Game(const Game&) = delete;
-    Game& operator=(const Game&) = delete;
-    Game(Game&&) = delete;
-    Game& operator=(Game&&) = delete;
+    Game(const Game &) = delete;
+    Game &operator=(const Game &) = delete;
+    Game(Game &&) = delete;
+    Game &operator=(Game &&) = delete;
 
     /**
      * @brief 创建游戏窗口
@@ -139,13 +140,13 @@ private:
      */
     void render();
 
-    std::unique_ptr<sf::RenderWindow> m_window;         ///< 游戏窗口
-    std::unique_ptr<SceneManager> m_sceneManager;       ///< 场景管理器
-    std::unique_ptr<ConfigManager> m_configManager;     ///< 配置管理器
-    std::unique_ptr<FrameTimer> m_frameTimer;           ///< 帧计时器
+    std::unique_ptr<sf::RenderWindow> m_window;     ///< 游戏窗口
+    std::unique_ptr<SceneManager> m_sceneManager;   ///< 场景管理器
+    std::unique_ptr<ConfigManager> m_configManager; ///< 配置管理器
+    std::unique_ptr<FrameTimer> m_frameTimer;       ///< 帧计时器
 
-    bool m_initialized;                                 ///< 是否已初始化
-    bool m_running;                                     ///< 是否正在运行
+    bool m_initialized; ///< 是否已初始化
+    bool m_running;     ///< 是否正在运行
 };
 
 } // namespace SamuraiFight
