@@ -3,7 +3,7 @@
 
 namespace SamuraiFight {
 
-IdleState::IdleState(Character* owner)
+IdleState::IdleState(Character *owner)
     : CharacterState(owner, CharacterStateType::Idle) {
 }
 
@@ -14,8 +14,11 @@ void IdleState::onEnter() {
     CharacterState::onEnter();
     m_owner->playAnimation("idle");
 
-    // 停止移动
-    m_owner->setVelocity(sf::Vector2f(0.0f, m_owner->getVelocity().y));
+    // 如果在地面上，水平速度为0;空中则保持
+    sf::Vector2f vel = m_owner->getVelocity();
+    if (m_owner->isOnGround()) {
+        m_owner->setVelocity(sf::Vector2f(0.0f, vel.y));
+    }
 }
 
 void IdleState::onExit() {

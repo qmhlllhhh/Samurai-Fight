@@ -4,10 +4,8 @@
 
 namespace SamuraiFight {
 
-HurtState::HurtState(Character* owner, int stunFrames)
-    : CharacterState(owner, CharacterStateType::Hurt)
-    , m_stunFrames(stunFrames)
-    , m_stunFinished(false) {
+HurtState::HurtState(Character *owner, int stunFrames)
+    : CharacterState(owner, CharacterStateType::Hurt), m_stunFrames(stunFrames), m_stunFinished(false) {
 }
 
 HurtState::~HurtState() {
@@ -19,9 +17,11 @@ void HurtState::onEnter() {
     // 播放受击动画
     m_owner->playAnimation("hurt");
 
-    // 停止水平移动
+    // 如果在地面上，水平速度为0;空中则保持
     sf::Vector2f vel = m_owner->getVelocity();
-    m_owner->setVelocity(sf::Vector2f(0.0f, vel.y));
+    if (m_owner->isOnGround()) {
+        m_owner->setVelocity(sf::Vector2f(0.0f, vel.y));
+    }
 
     // 重置状态
     m_stunFinished = false;
