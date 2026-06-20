@@ -182,6 +182,7 @@ void BattleScene::handleEvents(sf::RenderWindow &window) {
 }
 
 void BattleScene::update(float deltaTime) {
+
     // 更新输入管理器
     if (m_inputManager) {
         m_inputManager->update(*m_window);
@@ -394,7 +395,7 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                 // 检查防御者是否在防御状态
                 bool defenderIsBlocking = (defenderChar->getCurrentStateType() == CharacterStateType::Block);
 
-                if (defenderIsBlocking) {
+                if (defenderIsBlocking && isFacing(attackerChar, defenderChar)) {
                     // 防御成功！攻击者陷入硬直
                     const CharacterData &attackerData = attackerChar->getData();
                     std::string attackType;
