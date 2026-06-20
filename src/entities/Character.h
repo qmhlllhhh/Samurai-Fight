@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Entity.h"
-#include "CharacterData.h"
-#include "../states/CharacterStateType.h"
 #include "../components/AnimationComponent.h"
-#include "../components/HitboxComponent.h"
 #include "../components/HealthComponent.h"
+#include "../components/HitboxComponent.h"
 #include "../components/StaminaComponent.h"
 #include "../input/InputBuffer.h"
+#include "../states/CharacterStateType.h"
+#include "CharacterData.h"
+#include "Entity.h"
 #include <memory>
 
 namespace SamuraiFight {
@@ -28,14 +28,14 @@ class StateMachine;
  * 包含状态机、动画、碰撞框等组件
  */
 class Character : public Entity {
-public:
+  public:
     /**
      * @brief 构造函数
      *
      * @param data 角色数据
      * @param playerIndex 玩家索引 (0或1)
      */
-    Character(const CharacterData& data, int playerIndex);
+    Character(const CharacterData &data, int playerIndex);
 
     /**
      * @brief 析构函数
@@ -71,7 +71,7 @@ public:
      *
      * @param window 游戏窗口
      */
-    void render(sf::RenderWindow& window) override;
+    void render(sf::RenderWindow &window) override;
 
     /**
      * @brief 切换状态
@@ -85,7 +85,7 @@ public:
      *
      * @param name 动画名称
      */
-    void playAnimation(const std::string& name);
+    void playAnimation(const std::string &name);
 
     /**
      * @brief 获取移动速度
@@ -142,14 +142,14 @@ public:
      *
      * @return const CharacterData& 角色数据
      */
-    const CharacterData& getData() const;
+    const CharacterData &getData() const;
 
     /**
      * @brief 获取输入缓冲
      *
      * @return InputBuffer& 输入缓冲引用
      */
-    InputBuffer& getInputBuffer();
+    InputBuffer &getInputBuffer();
 
     /**
      * @brief 获取当前帧号
@@ -163,21 +163,21 @@ public:
      *
      * @return HitboxComponent* 碰撞框组件指针
      */
-    HitboxComponent* getHitboxComponent();
+    HitboxComponent *getHitboxComponent();
 
     /**
      * @brief 获取碰撞框组件（常量版本）
      *
      * @return const HitboxComponent* 碰撞框组件指针
      */
-    const HitboxComponent* getHitboxComponent() const;
+    const HitboxComponent *getHitboxComponent() const;
 
     /**
      * @brief 获取状态机
      *
      * @return StateMachine* 状态机指针
      */
-    StateMachine* getStateMachine();
+    StateMachine *getStateMachine();
 
     /**
      * @brief 检查当前是否可以取消攻击
@@ -208,14 +208,14 @@ public:
      *
      * @return HealthComponent* 生命值组件指针
      */
-    HealthComponent* getHealthComponent();
+    HealthComponent *getHealthComponent();
 
     /**
      * @brief 获取生命值组件（常量版本）
      *
      * @return const HealthComponent* 生命值组件指针
      */
-    const HealthComponent* getHealthComponent() const;
+    const HealthComponent *getHealthComponent() const;
 
     /**
      * @brief 检查是否死亡
@@ -230,14 +230,14 @@ public:
      *
      * @return StaminaComponent* 体力值组件指针
      */
-    StaminaComponent* getStaminaComponent();
+    StaminaComponent *getStaminaComponent();
 
     /**
      * @brief 获取体力值组件（常量版本）
      *
      * @return const StaminaComponent* 体力值组件指针
      */
-    const StaminaComponent* getStaminaComponent() const;
+    const StaminaComponent *getStaminaComponent() const;
 
     /**
      * @brief 检查体力是否耗尽
@@ -299,7 +299,7 @@ public:
      */
     bool isShowDebugHitboxes() const;
 
-private:
+  private:
     /**
      * @brief 初始化组件
      */
@@ -327,18 +327,18 @@ private:
      */
     void updateInputBuffer();
 
-    CharacterData m_data;                                    ///< 角色数据
-    std::unique_ptr<StateMachine> m_stateMachine;            ///< 状态机
-    std::unique_ptr<AnimationComponent> m_animation;         ///< 动画组件
-    std::unique_ptr<HitboxComponent> m_hitbox;               ///< 碰撞框组件
-    std::unique_ptr<HealthComponent> m_health;               ///< 生命值组件
-    std::unique_ptr<StaminaComponent> m_stamina;             ///< 体力值组件
-    std::unique_ptr<InputBuffer> m_inputBuffer;              ///< 输入缓冲
+    CharacterData m_data;                            ///< 角色数据
+    std::unique_ptr<StateMachine> m_stateMachine;    ///< 状态机
+    std::unique_ptr<AnimationComponent> m_animation; ///< 动画组件
+    std::unique_ptr<HitboxComponent> m_hitbox;       ///< 碰撞框组件
+    std::unique_ptr<HealthComponent> m_health;       ///< 生命值组件
+    std::unique_ptr<StaminaComponent> m_stamina;     ///< 体力值组件
+    std::unique_ptr<InputBuffer> m_inputBuffer;      ///< 输入缓冲
 
-    std::unique_ptr<sf::Sprite> m_sprite;                    ///< 精灵
-    int m_playerIndex;                                        ///< 玩家索引
-    bool m_facingRight;                                       ///< 是否朝右
-    int m_frameCount;                                         ///< 帧计数器
+    std::unique_ptr<sf::Sprite> m_sprite; ///< 精灵
+    int m_playerIndex;                    ///< 玩家索引
+    bool m_facingRight;                   ///< 是否朝右
+    int m_frameCount;                     ///< 帧计数器
 
     // 输入状态
     bool m_moveLeft;
@@ -351,14 +351,16 @@ private:
     bool m_attackHeavy;
 
     // 调试选项
-    bool m_showDebugHitboxes;  ///< 是否显示调试碰撞框
+    bool m_showDebugHitboxes; ///< 是否显示调试碰撞框
 
     // 状态机参数
-    int m_pendingStunFrames;   ///< 待处理的硬直帧数（用于HurtState）
+    int m_pendingStunFrames; ///< 待处理的硬直帧数（用于HurtState）
 
     // 防御相关
-    bool m_blockCooldown;      ///< 是否在防御冷却中
-    int m_blockCooldownTimer;  ///< 防御冷却计时器（帧数）
+    bool m_blockCooldown;     ///< 是否在防御冷却中
+    int m_blockCooldownTimer; ///< 防御冷却计时器（帧数）
 };
+
+bool isFacing(const Character *A, const Character *B);
 
 } // namespace SamuraiFight
