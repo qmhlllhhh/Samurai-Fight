@@ -9,6 +9,7 @@
 #include "../ui/StaminaBar.h"
 #include "../battle/MatchManager.h"
 #include "../battle/MatchHud.h"
+#include "../effects/ScreenShake.h"
 #include "Scene.h"
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -131,8 +132,11 @@ class BattleScene : public Scene {
     std::unique_ptr<MatchHud> m_matchHud;         ///< 比赛HUD
 
     /**
-     * @brief 比赛结束时处理（胜者进入胜利状态）
+     * @brief 比赛结束时处理（切结果场景）
      */
     void onMatchEnd();
+
+    // 屏幕震动效果
+    ScreenShake m_screenShake; ///< 屏幕震动
 };
 } // namespace SamuraiFight

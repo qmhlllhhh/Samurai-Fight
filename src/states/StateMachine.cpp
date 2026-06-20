@@ -1,9 +1,9 @@
 #include "StateMachine.h"
 #include "../entities/Character.h"
 #include "IdleState.h"
-#include "MoveState.h"
+#include "WalkState.h"
+#include "RunState.h"
 #include "JumpState.h"
-#include "CrouchState.h"
 #include "AttackState.h"
 #include "HurtState.h"
 #include "BlockState.h"
@@ -70,12 +70,12 @@ std::unique_ptr<CharacterState> StateMachine::createState(CharacterStateType sta
     switch (stateType) {
     case CharacterStateType::Idle:
         return std::make_unique<IdleState>(m_owner);
-    case CharacterStateType::Move:
-        return std::make_unique<MoveState>(m_owner);
+    case CharacterStateType::Walk:
+        return std::make_unique<WalkState>(m_owner);
+    case CharacterStateType::Run:
+        return std::make_unique<RunState>(m_owner);
     case CharacterStateType::Jump:
         return std::make_unique<JumpState>(m_owner);
-    case CharacterStateType::Crouch:
-        return std::make_unique<CrouchState>(m_owner);
     case CharacterStateType::AttackLight:
         return std::make_unique<AttackState>(m_owner, "light");
     case CharacterStateType::AttackMedium:

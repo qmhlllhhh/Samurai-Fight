@@ -45,17 +45,18 @@ public:
     /**
      * @brief 处理输入
      *
-     * @param moveLeft 是否向左移动
-     * @param moveRight 是否向右移动
+     * @param moveLeft 是否向左走路
+     * @param moveRight 是否向右走路
+     * @param runLeft 是否向左跑步
+     * @param runRight 是否向右跑步
      * @param jump 是否跳跃
-     * @param crouch 是否下蹲
      * @param attackLight 轻攻击
      * @param attackMedium 中攻击
      * @param attackHeavy 重攻击
      * @param block 是否防御
      * @param roll 是否翻滚
      */
-    void handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
+    void handleInput(bool moveLeft, bool moveRight, bool runLeft, bool runRight, bool jump,
                      bool attackLight, bool attackMedium, bool attackHeavy, bool block = false, bool roll = false);
 
     /**
@@ -350,8 +351,9 @@ private:
     // 输入状态
     bool m_moveLeft;
     bool m_moveRight;
+    bool m_runLeft;
+    bool m_runRight;
     bool m_jump;
-    bool m_crouch;
     bool m_attackLight;
     bool m_attackMedium;
     bool m_attackHeavy;

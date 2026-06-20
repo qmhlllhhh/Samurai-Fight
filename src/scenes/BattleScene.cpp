@@ -207,14 +207,16 @@ void BattleScene::update(float deltaTime) {
             if (m_characters[i]) {
                 if (inputLocked) {
                     m_characters[i]->handleInput(false, false, false, false,
-                                                 false, false, false, false, false);
+                                                 false, false, false, false, false,
+                                                 false);
                 } else {
                     InputState input = m_inputManager->getPlayerInput(i);
                     m_characters[i]->handleInput(
                         input.moveLeft,
                         input.moveRight,
+                        input.runLeft,
+                        input.runRight,
                         input.jump,
-                        input.crouch,
                         input.attackLight,
                         input.attackMedium,
                         input.attackHeavy,
@@ -272,7 +274,7 @@ void BattleScene::update(float deltaTime) {
                     " R=" + std::string(input.moveRight ? "1" : "0") +
                     " J=" + std::string(input.jump ? "1" : "0") + "\n";
         debugStr += "\nControls:\n";
-        debugStr += "  WASD - Move/Jump/Crouch\n";
+        debugStr += "  WASD - Move/Jump\n";
         debugStr += "  F1 - Toggle debug info\n";
         debugStr += "  ESC - Pause";
 
@@ -296,9 +298,20 @@ void BattleScene::update(float deltaTime) {
                                m_matchManager->getMatchWinner());
         }
     }
+
+    // 更新屏幕震动
+    m_screenShake.update(deltaTime);
 }
 
 void BattleScene::render(sf::RenderWindow &window) {
+    // 应用屏幕震动
+    sf::View originalView = window.getView();
+    if (m_screenShake.isActive()) {
+        sf::View shakeView = originalView;
+        shakeView.move(m_screenShake.getOffset());
+        window.setView(shakeView);
+    }
+
     // 绘制背景
     if (m_background) {
         window.draw(*m_background);
@@ -344,6 +357,9 @@ void BattleScene::render(sf::RenderWindow &window) {
     if (m_matchHud) {
         m_matchHud->render(window);
     }
+
+    // 恢复原始视图
+    window.setView(originalView);
 }
 
 void BattleScene::checkCollisions() {
@@ -444,6 +460,11 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                     // 攻击者陷入硬直
                     attackerChar->triggerHurt(attackerStunFrames);
 
+                    // 屏幕震动 - 防御成功
+                    float shakeIntensity = 6.0f;
+                    float shakeDuration = 0.15f;
+                    m_screenShake.trigger(shakeIntensity, shakeDuration);
+
                     // 防御者解除防御（无冷却）
                     BlockState *blockState = dynamic_cast<BlockState *>(defenderChar->getStateMachine()->getCurrentState());
                     if (blockState) {
@@ -478,6 +499,18 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
 
                         // 播放命中音效
                         AudioManager::getInstance().playSound("hit");
+
+                        // 屏幕震动 - 根据攻击类型设置不同强度
+                        float shakeIntensity = 3.0f;
+                        float shakeDuration = 0.1f;
+                        if (attackType == "medium") {
+                            shakeIntensity = 5.0f;
+                            shakeDuration = 0.15f;
+                        } else if (attackType == "heavy") {
+                            shakeIntensity = 8.0f;
+                            shakeDuration = 0.2f;
+                        }
+                        m_screenShake.trigger(shakeIntensity, shakeDuration);
 
                         // 增加命中次数
                         attackState->incrementHitCount();
