@@ -62,7 +62,7 @@ bool ResourceManager::initialize() {
         {"select", "assets/sounds/ui/select.wav"},
         {"cursor", "assets/sounds/ui/cursor.wav"},
         {"cancel", "assets/sounds/ui/cancel.wav"},
-        {"popup_open", "assets/sounds/ui/countdown.wav"},
+        {"popup_open", "assets/sounds/ui/popup_open.wav"},
         {"popup_close", "assets/sounds/ui/popup_close.wav"},
 
         // Round sounds
@@ -79,6 +79,7 @@ bool ResourceManager::initialize() {
         {"musashi_block", "assets/sounds/characters/musashi/block.wav"},
         {"musashi_jump", "assets/sounds/characters/musashi/jump.wav"},
         {"musashi_land", "assets/sounds/characters/musashi/land.wav"},
+        {"musashi_roll", "assets/sounds/characters/musashi/roll.wav"},
 
         // Character-specific sounds - Sakura
         {"sakura_hurt", "assets/sounds/characters/sakura/hurt.wav"},
@@ -88,6 +89,7 @@ bool ResourceManager::initialize() {
         {"sakura_attack_heavy", "assets/sounds/characters/sakura/attack_heavy.wav"},
         {"sakura_block", "assets/sounds/characters/sakura/block.wav"},
         {"sakura_jump", "assets/sounds/characters/sakura/jump.wav"},
+        {"sakura_roll", "assets/sounds/characters/sakura/roll.wav"},
         {"sakura_land", "assets/sounds/characters/sakura/land.wav"}};
 
     for (const auto &[id, path] : soundsToLoad) {

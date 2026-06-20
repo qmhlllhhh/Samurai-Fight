@@ -1,6 +1,7 @@
 #pragma once
 
 #include "InputCommand.h"
+#include "InputBuffer.h"
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <string>
@@ -94,6 +95,22 @@ private:
      */
     sf::Keyboard::Key stringToKey(const std::string& keyName) const;
 
+    /**
+     * @brief 更新单个玩家的输入
+     *
+     * @param keyBindings 键位映射
+     * @param buffer 输入缓冲
+     * @param keyStates 按键状态追踪
+     * @param inputState 输出输入状态
+     * @param playerId 玩家ID (1或2)
+     */
+    void updatePlayerInput(
+        std::unordered_map<std::string, sf::Keyboard::Key>& keyBindings,
+        InputBuffer& buffer,
+        std::unordered_map<std::string, bool>& keyStates,
+        InputState& inputState,
+        int playerId);
+
     // 玩家1键位
     std::unordered_map<std::string, sf::Keyboard::Key> m_player1Keys;
 
@@ -107,6 +124,15 @@ private:
     InputState m_player1Input;
     InputState m_player2Input;
     bool m_pausePressed;
+
+    // 输入缓冲
+    InputBuffer m_player1Buffer;
+    InputBuffer m_player2Buffer;
+    int m_currentFrame;
+
+    // 按键状态追踪（用于检测按下/释放事件）
+    std::unordered_map<std::string, bool> m_player1KeyStates;
+    std::unordered_map<std::string, bool> m_player2KeyStates;
 };
 
 } // namespace SamuraiFight

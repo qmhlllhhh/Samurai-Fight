@@ -1,5 +1,6 @@
 #include "Character.h"
 #include "../core/Constants.h"
+#include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
 #include "../states/AttackState.h"
 #include "../states/StateMachine.h"
@@ -9,7 +10,7 @@
 namespace SamuraiFight {
 
 Character::Character(const CharacterData &data, int playerIndex)
-    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_health(nullptr), m_stamina(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_jump(false), m_crouch(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false), m_pendingStunFrames(10), m_blockCooldown(false), m_blockCooldownTimer(0) {
+    : Entity(), m_data(data), m_stateMachine(nullptr), m_animation(nullptr), m_hitbox(nullptr), m_health(nullptr), m_stamina(nullptr), m_inputBuffer(nullptr), m_playerIndex(playerIndex), m_facingRight(true), m_frameCount(0), m_moveLeft(false), m_moveRight(false), m_runLeft(false), m_runRight(false), m_jump(false), m_attackLight(false), m_attackMedium(false), m_attackHeavy(false), m_showDebugHitboxes(false), m_pendingStunFrames(10), m_blockCooldown(false), m_blockCooldownTimer(0) {
     // 设置初始位置
     float startX = (playerIndex == 0) ? 300.0f : WINDOW_WIDTH - 300.0f;
     setPosition(sf::Vector2f(startX, GROUND_LEVEL));
@@ -71,16 +72,22 @@ void Character::initializeComponents() {
     m_stateMachine = std::make_unique<StateMachine>(this);
 }
 
-void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
+void Character::handleInput(bool moveLeft, bool moveRight, bool runLeft, bool runRight, bool jump,
                             bool attackLight, bool attackMedium, bool attackHeavy, bool block, bool roll) {
 
+    // 防止同时按左和右
     if (moveLeft && moveRight) {
-        moveLeft = moveRight = 0;
+        moveLeft = moveRight = false;
     }
+    if (runLeft && runRight) {
+        runLeft = runRight = false;
+    }
+
     m_moveLeft = moveLeft;
     m_moveRight = moveRight;
+    m_runLeft = runLeft;
+    m_runRight = runRight;
     m_jump = jump;
-    m_crouch = crouch;
     m_attackLight = attackLight;
     m_attackMedium = attackMedium;
     m_attackHeavy = attackHeavy;
@@ -91,9 +98,9 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
     // ========== 跳跃状态下的空中控制 ==========
     if (currentState == CharacterStateType::Jump) {
         // 更新朝向
-        if (moveRight) {
+        if (moveRight || runRight) {
             m_facingRight = true;
-        } else if (moveLeft) {
+        } else if (moveLeft || runLeft) {
             m_facingRight = false;
         }
 
@@ -121,9 +128,9 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         float airMoveSpeed = m_data.stats.moveSpeed * 0.8f;
         sf::Vector2f velocity = getVelocity();
 
-        if (moveLeft) {
+        if (moveLeft || runLeft) {
             velocity.x = -airMoveSpeed;
-        } else if (moveRight) {
+        } else if (moveRight || runRight) {
             velocity.x = airMoveSpeed;
         } else {
             velocity.x *= 0.95f;
@@ -243,39 +250,55 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         }
     }
 
-    // 下蹲
-    if (crouch && m_onGround && currentState != CharacterStateType::Crouch) {
-        changeState(CharacterStateType::Crouch);
-        return;
+    // 跑步（需要体力大于20%阈值）
+    if ((runLeft || runRight) && m_onGround &&
+        currentState != CharacterStateType::Run) {
+        if (m_stamina && m_stamina->canEnterStaminaState()) {
+            if (runRight) {
+                m_facingRight = true;
+            } else if (runLeft) {
+                m_facingRight = false;
+            }
+            changeState(CharacterStateType::Run);
+            return;
+        }
     }
 
-    // 如果在下蹲状态，松开下蹲键后回到站立
-    if (currentState == CharacterStateType::Crouch && !crouch) {
-        changeState(CharacterStateType::Idle);
-        return;
-    }
-
-    // 移动（不需要体力阈值限制）
+    // 走路（不需要体力阈值限制）
     if ((moveLeft || moveRight) && m_onGround &&
-        currentState != CharacterStateType::Move &&
-        currentState != CharacterStateType::Crouch) {
+        currentState != CharacterStateType::Walk) {
         if (moveRight) {
             m_facingRight = true;
         } else if (moveLeft) {
             m_facingRight = false;
         }
-        changeState(CharacterStateType::Move);
+        changeState(CharacterStateType::Walk);
         return;
     }
 
-    // 如果在移动状态，停止移动后回到站立
-    if (currentState == CharacterStateType::Move && !moveLeft && !moveRight) {
+    // 如果在跑步状态，停止跑步后回到站立
+    if (currentState == CharacterStateType::Run && !runLeft && !runRight) {
         changeState(CharacterStateType::Idle);
         return;
     }
 
-    // 更新朝向（在地面移动中）
-    if (currentState == CharacterStateType::Move) {
+    // 如果在走路状态，停止走路后回到站立
+    if (currentState == CharacterStateType::Walk && !moveLeft && !moveRight) {
+        changeState(CharacterStateType::Idle);
+        return;
+    }
+
+    // 更新朝向（在地面跑步中）
+    if (currentState == CharacterStateType::Run) {
+        if (runRight) {
+            m_facingRight = true;
+        } else if (runLeft) {
+            m_facingRight = false;
+        }
+    }
+
+    // 更新朝向（在地面走路中）
+    if (currentState == CharacterStateType::Walk) {
         if (moveRight) {
             m_facingRight = true;
         } else if (moveLeft) {
@@ -338,14 +361,14 @@ void Character::update(float deltaTime) {
         case CharacterStateType::Idle:
             stateName = "idle";
             break;
-        case CharacterStateType::Move:
+        case CharacterStateType::Walk:
             stateName = "walk";
+            break;
+        case CharacterStateType::Run:
+            stateName = "run";
             break;
         case CharacterStateType::Jump:
             stateName = "jump";
-            break;
-        case CharacterStateType::Crouch:
-            stateName = "crouch";
             break;
         case CharacterStateType::AttackLight:
         case CharacterStateType::AttackMedium:
@@ -381,12 +404,13 @@ void Character::update(float deltaTime) {
 
     // 更新体力值
     if (m_stamina) {
-        bool isMoving = (getCurrentStateType() == CharacterStateType::Move);
+        bool isWalking = (getCurrentStateType() == CharacterStateType::Walk);
+        bool isRunning = (getCurrentStateType() == CharacterStateType::Run);
         bool isJumping = (getCurrentStateType() == CharacterStateType::Jump);
         bool isStanding = (getCurrentStateType() == CharacterStateType::Idle && m_onGround);
 
         m_stamina->update(
-            isMoving,
+            isWalking || isRunning,
             isJumping,
             isStanding,
             m_data.stats.moveStaminaRecovery,
@@ -508,6 +532,9 @@ void Character::applyGravity(float deltaTime) {
 void Character::checkGroundCollision() {
     // 检测是否落地
     if (m_position.y >= GROUND_LEVEL) {
+        if (!m_onGround) {
+            AudioManager::getInstance().playCharacterSound(getData().id, "land");
+        }
         m_position.y = GROUND_LEVEL;
         m_velocity.y = 0.0f;
         m_onGround = true;
@@ -523,14 +550,14 @@ void Character::checkScreenBounds() {
     case CharacterStateType::Idle:
         stateName = "idle";
         break;
-    case CharacterStateType::Move:
+    case CharacterStateType::Walk:
         stateName = "walk";
+        break;
+    case CharacterStateType::Run:
+        stateName = "run";
         break;
     case CharacterStateType::Jump:
         stateName = "jump";
-        break;
-    case CharacterStateType::Crouch:
-        stateName = "crouch";
         break;
     case CharacterStateType::AttackLight:
         stateName = "attack_light";

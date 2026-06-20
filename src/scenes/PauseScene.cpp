@@ -12,6 +12,8 @@ PauseScene::~PauseScene() {}
 void PauseScene::onEnter() {
     std::cout << "PauseScene: Entered" << std::endl;
 
+    AudioManager::getInstance().playSound("popup_open");
+
     // 获取默认字体
     try {
         const sf::Font &font = ResourceManager::getInstance().getFont("defaultBold");
@@ -37,6 +39,8 @@ void PauseScene::onEnter() {
 }
 
 void PauseScene::onExit() {
+    AudioManager::getInstance().playSound("popup_close");
+
     std::cout << "PauseScene: Exited" << std::endl;
 }
 void PauseScene::handleEvents(sf::RenderWindow &window) {

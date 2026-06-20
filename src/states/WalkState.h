@@ -5,29 +5,29 @@
 namespace SamuraiFight {
 
 /**
- * @file MoveState.h
- * @brief 移动状态
+ * @file WalkState.h
+ * @brief 走路状态
  */
 
 /**
- * @class MoveState
- * @brief 角色移动状态
+ * @class WalkState
+ * @brief 角色走路状态
  *
- * 角色左右移动时的状态，消耗体力
+ * 角色左右走路时的状态，需要按住S+方向键
  */
-class MoveState : public CharacterState {
+class WalkState : public CharacterState {
 public:
     /**
      * @brief 构造函数
      *
      * @param owner 所属角色
      */
-    MoveState(Character* owner);
+    WalkState(Character* owner);
 
     /**
      * @brief 析构函数
      */
-    ~MoveState() override;
+    ~WalkState() override;
 
     /**
      * @brief 进入状态时调用

@@ -7,7 +7,10 @@
 namespace SamuraiFight {
 
 InputManager::InputManager()
-    : m_pausePressed(false) {
+    : m_pausePressed(false)
+    , m_player1Buffer(12)
+    , m_player2Buffer(12)
+    , m_currentFrame(0) {
 }
 
 InputManager::~InputManager() {
@@ -29,50 +32,23 @@ bool InputManager::initialize() {
 }
 
 void InputManager::update(sf::RenderWindow& /*window*/) {
+    // 增加帧计数
+    m_currentFrame++;
+    m_player1Buffer.setCurrentFrame(m_currentFrame);
+    m_player2Buffer.setCurrentFrame(m_currentFrame);
+
     // 重置输入状态
     m_player1Input.reset();
     m_player2Input.reset();
     m_pausePressed = false;
 
     // 更新玩家1输入
-    auto checkKey1 = [this](const std::string& action) -> bool {
-        auto it = m_player1Keys.find(action);
-        if (it != m_player1Keys.end()) {
-            return sf::Keyboard::isKeyPressed(it->second);
-        }
-        return false;
-    };
-
-    m_player1Input.moveLeft = checkKey1("moveLeft");
-    m_player1Input.moveRight = checkKey1("moveRight");
-    m_player1Input.jump = checkKey1("jump");
-    m_player1Input.crouch = checkKey1("crouch");
-    m_player1Input.attackLight = checkKey1("attackLight");
-    m_player1Input.attackMedium = checkKey1("attackMedium");
-    m_player1Input.attackHeavy = checkKey1("attackHeavy");
-    m_player1Input.attackSpecial = checkKey1("attackSpecial");
-    m_player1Input.block = checkKey1("block");
-    m_player1Input.roll = checkKey1("roll");
+    updatePlayerInput(m_player1Keys, m_player1Buffer, m_player1KeyStates,
+                      m_player1Input, 1);
 
     // 更新玩家2输入
-    auto checkKey2 = [this](const std::string& action) -> bool {
-        auto it = m_player2Keys.find(action);
-        if (it != m_player2Keys.end()) {
-            return sf::Keyboard::isKeyPressed(it->second);
-        }
-        return false;
-    };
-
-    m_player2Input.moveLeft = checkKey2("moveLeft");
-    m_player2Input.moveRight = checkKey2("moveRight");
-    m_player2Input.jump = checkKey2("jump");
-    m_player2Input.crouch = checkKey2("crouch");
-    m_player2Input.attackLight = checkKey2("attackLight");
-    m_player2Input.attackMedium = checkKey2("attackMedium");
-    m_player2Input.attackHeavy = checkKey2("attackHeavy");
-    m_player2Input.attackSpecial = checkKey2("attackSpecial");
-    m_player2Input.block = checkKey2("block");
-    m_player2Input.roll = checkKey2("roll");
+    updatePlayerInput(m_player2Keys, m_player2Buffer, m_player2KeyStates,
+                      m_player2Input, 2);
 
     // 更新全局输入
     if (m_globalKeys.find("pause") != m_globalKeys.end()) {
@@ -97,7 +73,6 @@ void InputManager::loadDefaultKeyBindings() {
     m_player1Keys["moveLeft"] = sf::Keyboard::Key::A;
     m_player1Keys["moveRight"] = sf::Keyboard::Key::D;
     m_player1Keys["jump"] = sf::Keyboard::Key::W;
-    m_player1Keys["crouch"] = sf::Keyboard::Key::S;
     m_player1Keys["attackLight"] = sf::Keyboard::Key::J;
     m_player1Keys["attackMedium"] = sf::Keyboard::Key::K;
     m_player1Keys["attackHeavy"] = sf::Keyboard::Key::L;
@@ -109,7 +84,6 @@ void InputManager::loadDefaultKeyBindings() {
     m_player2Keys["moveLeft"] = sf::Keyboard::Key::Left;
     m_player2Keys["moveRight"] = sf::Keyboard::Key::Right;
     m_player2Keys["jump"] = sf::Keyboard::Key::Up;
-    m_player2Keys["crouch"] = sf::Keyboard::Key::Down;
     m_player2Keys["attackLight"] = sf::Keyboard::Key::Numpad1;
     m_player2Keys["attackMedium"] = sf::Keyboard::Key::Numpad2;
     m_player2Keys["attackHeavy"] = sf::Keyboard::Key::Numpad3;
@@ -189,6 +163,83 @@ sf::Keyboard::Key InputManager::stringToKey(const std::string& keyName) const {
 
     // 默认返回未知键
     return sf::Keyboard::Key::Unknown;
+}
+
+void InputManager::updatePlayerInput(
+    std::unordered_map<std::string, sf::Keyboard::Key>& keyBindings,
+    InputBuffer& buffer,
+    std::unordered_map<std::string, bool>& keyStates,
+    InputState& inputState,
+    int playerId) {
+
+    // 定义动作列表
+    const std::vector<std::pair<std::string, InputAction>> actions = {
+        {"moveLeft", InputAction::MoveLeft},
+        {"moveRight", InputAction::MoveRight},
+        {"jump", InputAction::Jump},
+        {"attackLight", InputAction::AttackLight},
+        {"attackMedium", InputAction::AttackMedium},
+        {"attackHeavy", InputAction::AttackHeavy},
+        {"attackSpecial", InputAction::AttackSpecial},
+        {"block", InputAction::Block},
+        {"roll", InputAction::Roll}
+    };
+
+    // 检测按键状态变化并推入缓冲
+    for (const auto& [actionName, action] : actions) {
+        auto it = keyBindings.find(actionName);
+        if (it == keyBindings.end()) continue;
+
+        bool currentPressed = sf::Keyboard::isKeyPressed(it->second);
+        bool& prevPressed = keyStates[actionName];
+
+        // 状态变化时推入缓冲
+        if (currentPressed != prevPressed) {
+            buffer.pushInput(action, currentPressed, m_currentFrame);
+            prevPressed = currentPressed;
+        }
+    }
+
+    // 获取下键的当前状态（用于走路条件）
+    // 玩家1用S键，玩家2用下方向键
+    bool downPressed = false;
+    if (playerId == 1) {
+        downPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S);
+    } else {
+        downPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down);
+    }
+
+    // 通过InputBuffer检测输入
+    // 走路：需要按住下键 + 左/右键
+    // 跑步：仅按住左/右键（不按下键）
+    auto leftIt = keyBindings.find("moveLeft");
+    auto rightIt = keyBindings.find("moveRight");
+
+    if (leftIt != keyBindings.end()) {
+        bool leftPressed = sf::Keyboard::isKeyPressed(leftIt->second);
+        inputState.moveLeft = downPressed && leftPressed;   // 走路：S + 左
+        inputState.runLeft = !downPressed && leftPressed;   // 跑步：仅左
+    }
+
+    if (rightIt != keyBindings.end()) {
+        bool rightPressed = sf::Keyboard::isKeyPressed(rightIt->second);
+        inputState.moveRight = downPressed && rightPressed; // 走路：S + 右
+        inputState.runRight = !downPressed && rightPressed; // 跑步：仅右
+    }
+
+    // 跳跃、攻击、翻滚：检测按下事件（最近2帧内）
+    inputState.jump = buffer.hasPressEvent(InputAction::Jump, 0, 2);
+    inputState.attackLight = buffer.hasPressEvent(InputAction::AttackLight, 0, 2);
+    inputState.attackMedium = buffer.hasPressEvent(InputAction::AttackMedium, 0, 2);
+    inputState.attackHeavy = buffer.hasPressEvent(InputAction::AttackHeavy, 0, 2);
+    inputState.attackSpecial = buffer.hasPressEvent(InputAction::AttackSpecial, 0, 2);
+    inputState.roll = buffer.hasPressEvent(InputAction::Roll, 0, 2);
+
+    // 格挡：持续按住检测
+    auto blockIt = keyBindings.find("block");
+    if (blockIt != keyBindings.end()) {
+        inputState.block = sf::Keyboard::isKeyPressed(blockIt->second);
+    }
 }
 
 } // namespace SamuraiFight
