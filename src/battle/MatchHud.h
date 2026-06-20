@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include "../ui/Timer.h"
+#include "../ui/ScoreDisplay.h"
 #include "RoundManager.h"
 
 namespace SamuraiFight {
@@ -15,19 +17,12 @@ namespace SamuraiFight {
  * @class MatchHud
  * @brief 比赛信息显示组件
  *
- * 显示回合过渡文字（ROUND n / FIGHT! / 倒计时 / K.O. / TIME UP / DRAW）
- * 以及双方比分。
+ * 用 Timer 显示回合计时、ScoreDisplay 显示比分，自留过渡文字
+ * （ROUND n / FIGHT! / K.O. / TIME UP / DRAW / 胜负横幅 PLAYER X WINS!）。
  */
 class MatchHud {
 public:
-    /**
-     * @brief 构造函数
-     */
     MatchHud();
-
-    /**
-     * @brief 析构函数
-     */
     ~MatchHud();
 
     /**
@@ -50,8 +45,10 @@ public:
     void render(sf::RenderWindow& window);
 
 private:
-    std::unique_ptr<sf::Text> m_announceText;  ///< 过渡文字/倒计时/结果
-    std::unique_ptr<sf::Text> m_scoreText;     ///< 比分
+    std::unique_ptr<Timer> m_timer;                  ///< 计时器（仅 Fight 阶段显示）
+    std::unique_ptr<ScoreDisplay> m_scoreDisplay;    ///< 比分
+    std::unique_ptr<sf::Text> m_announceText;        ///< 过渡文字 / 结果 / 胜负横幅
+    RoundPhase m_currentPhase = RoundPhase::Intro;   ///< 当前阶段（控制 Timer 显示）
 };
 
 } // namespace SamuraiFight

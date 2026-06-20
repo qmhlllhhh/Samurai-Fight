@@ -41,6 +41,7 @@ set(SOURCES
     src/scenes/BattleScene.cpp
     src/scenes/PauseScene.cpp
     src/scenes/SettingsScene.cpp
+    src/scenes/ResultScene.cpp
 
     # Entities
     src/entities/Entity.cpp
@@ -84,6 +85,8 @@ set(SOURCES
     # UI
     src/ui/HealthBar.cpp
     src/ui/StaminaBar.cpp
+    src/ui/Timer.cpp
+    src/ui/ScoreDisplay.cpp
 )
 
 # 头文件目录

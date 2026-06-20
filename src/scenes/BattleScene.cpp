@@ -7,6 +7,7 @@
 #include "../states/BlockState.h"
 #include "../states/StateMachine.h"
 #include "PauseScene.h"
+#include "ResultScene.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -495,12 +496,18 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
 }
 
 void BattleScene::onMatchEnd() {
-    // 比赛结束：胜者进入胜利状态（败者若被击倒则已是 Dead）
-    int winner = m_matchManager ? m_matchManager->getMatchWinner() : -1;
-    if (winner >= 0 && m_characters[winner] &&
-        m_characters[winner]->getCurrentStateType() != CharacterStateType::Victory) {
-        m_characters[winner]->changeState(CharacterStateType::Victory);
-    }
+    // 比赛结束：切换到结果场景（仅切一次）
+    if (!m_matchManager || m_nextScene != nullptr) return;
+    int winner = m_matchManager->getMatchWinner();
+    if (winner < 0) return;
+
+    m_nextScene = std::make_unique<ResultScene>(
+        winner,
+        m_matchManager->getRoundsWon(0),
+        m_matchManager->getRoundsWon(1),
+        m_player1CharacterId,
+        m_player2CharacterId);
+    m_popSceneCount = 1;  // 替换 BattleScene
 }
 
 } // namespace SamuraiFight
