@@ -6,9 +6,9 @@
         "maxHp": 100,
         "maxStamina": 100,
         "moveSpeed": 300.0,
-        "jumpHeight": 400.0,
+        "jumpHeight": 900.0,
         "staminaRecovery": 0.5,
-        "moveStaminaCost": 0.0,
+        "moveStaminaRecovery": 0.1,
         "jumpStaminaCost": 10.0
     },
     "attacks": {
@@ -68,7 +68,7 @@
         },
         "jump": {
             "spriteSheet": "assets/characters/musashi/jump.png",
-            "frameCount": 9,
+            "frameCount": 12,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
@@ -116,8 +116,8 @@
         },
         "roll": {
             "spriteSheet": "assets/characters/musashi/roll.png",
-            "frameCount": 4,
-            "frameDuration": 0.0833,
+            "frameCount": 6,
+            "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
@@ -130,6 +130,16 @@
             "frameWidth": 128,
             "frameHeight": 128
         }
+    },
+    "sounds": {
+        "hurt": "musashi_hurt",
+        "death": "musashi_death",
+        "attack_light": "musashi_attack_light",
+        "attack_medium": "musashi_attack_medium",
+        "attack_heavy": "musashi_attack_heavy",
+        "block_success": "musashi_block",
+        "jump": "musashi_jump",
+        "land": "musashi_land"
     },
     "hitboxes": {
         "idle": [

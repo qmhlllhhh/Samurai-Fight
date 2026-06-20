@@ -1,22 +1,15 @@
 #include "AttackState.h"
 #include "../entities/Character.h"
 #include "../entities/CharacterData.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
 
-AttackState::AttackState(Character* owner, const std::string& attackType)
-    : CharacterState(owner, CharacterStateType::AttackLight)  // 默认设置为轻攻击，后面会根据类型更新
-    , m_attackType(attackType)
-    , m_totalFrames(10)
-    , m_startupEnd(3)
-    , m_activeEnd(5)
-    , m_hasHit(false)
-    , m_canCancel(true)
-    , m_cancelWindowStart(2)
-    , m_cancelWindowEnd(5)
-    , m_maxHitCount(1)
-    , m_currentHitCount(0) {
+AttackState::AttackState(Character *owner, const std::string &attackType)
+    : CharacterState(owner, CharacterStateType::AttackLight) // 默认设置为轻攻击，后面会根据类型更新
+      ,
+      m_attackType(attackType), m_totalFrames(10), m_startupEnd(3), m_activeEnd(5), m_hasHit(false), m_canCancel(true), m_cancelWindowStart(2), m_cancelWindowEnd(5), m_maxHitCount(1), m_currentHitCount(0) {
     // 根据攻击类型设置状态类型
     if (attackType == "light") {
         m_type = CharacterStateType::AttackLight;
@@ -27,10 +20,10 @@ AttackState::AttackState(Character* owner, const std::string& attackType)
     }
 
     // 从角色数据加载攻击帧数据
-    const CharacterData& data = owner->getData();
+    const CharacterData &data = owner->getData();
     auto it = data.attacks.find(attackType);
     if (it != data.attacks.end()) {
-        const AttackData& attackData = it->second;
+        const AttackData &attackData = it->second;
         m_totalFrames = attackData.getTotalFrames();
         m_startupEnd = attackData.startupFrames;
         m_activeEnd = attackData.startupFrames + attackData.activeFrames;
@@ -51,13 +44,20 @@ void AttackState::onEnter() {
     std::string animName = "attack_" + m_attackType;
     m_owner->playAnimation(animName);
 
-    // 停止水平移动
+    // 如果在地面上，水平速度为0;空中则保持
     sf::Vector2f vel = m_owner->getVelocity();
-    m_owner->setVelocity(sf::Vector2f(0.0f, vel.y));
+    if (m_owner->isOnGround()) {
+        m_owner->setVelocity(sf::Vector2f(0.0f, vel.y));
+    }
 
     // 重置状态
     m_hasHit = false;
     m_frameCount = 0;
+
+    // 播放攻击音效
+    std::string characterId = m_owner->getData().id;
+    std::string soundType = "attack_" + m_attackType;
+    AudioManager::getInstance().playCharacterSound(characterId, soundType);
 
     std::cout << "AttackState: Entered " << m_attackType << " attack"
               << " (startup=" << m_startupEnd
@@ -81,7 +81,7 @@ void AttackState::update(float deltaTime) {
     }
 }
 
-const std::string& AttackState::getAttackType() const {
+const std::string &AttackState::getAttackType() const {
     return m_attackType;
 }
 
@@ -91,7 +91,7 @@ bool AttackState::isInActiveFrames() const {
 }
 
 std::pair<int, int> AttackState::getActiveFrameRange() const {
-    return {m_startupEnd, m_activeEnd - 1};  // 返回闭区间
+    return {m_startupEnd, m_activeEnd - 1}; // 返回闭区间
 }
 
 bool AttackState::isFrameInActiveFrames(int frame) const {
@@ -112,11 +112,11 @@ bool AttackState::isFinished() const {
 
 int AttackState::getPhase() const {
     if (m_frameCount < m_startupEnd) {
-        return 0;  // 前摇
+        return 0; // 前摇
     } else if (m_frameCount < m_activeEnd) {
-        return 1;  // 判定
+        return 1; // 判定
     } else {
-        return 2;  // 后摇
+        return 2; // 后摇
     }
 }
 

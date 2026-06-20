@@ -1,6 +1,7 @@
 #include "JumpState.h"
 #include "../entities/Character.h"
 #include "../core/Constants.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -24,6 +25,10 @@ void JumpState::onEnter() {
     velocity.y = -jumpHeight; // 向上跳跃
     m_owner->setVelocity(velocity);
 
+    // 播放跳跃音效
+    std::string characterId = m_owner->getData().id;
+    AudioManager::getInstance().playCharacterSound(characterId, "jump");
+
     std::cout << "JumpState: onEnter - velocity.y = " << velocity.y << std::endl;
 
     // 消耗体力（阶段3实现）
@@ -32,6 +37,10 @@ void JumpState::onEnter() {
 
 void JumpState::onExit() {
     CharacterState::onExit();
+
+    // 播放落地音效
+    std::string characterId = m_owner->getData().id;
+    AudioManager::getInstance().playCharacterSound(characterId, "land");
 }
 
 void JumpState::update(float deltaTime) {

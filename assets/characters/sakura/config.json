@@ -6,9 +6,9 @@
         "maxHp": 100,
         "maxStamina": 100,
         "moveSpeed": 300.0,
-        "jumpHeight": 400.0,
+        "jumpHeight": 900.0,
         "staminaRecovery": 0.5,
-        "moveStaminaCost": 0.0,
+        "moveStaminaRecovery": 0.1,
         "jumpStaminaCost": 10.0
     },
     "attacks": {
@@ -124,8 +124,8 @@
         },
         "roll": {
             "spriteSheet": "assets/characters/sakura/roll.png",
-            "frameCount": 4,
-            "frameDuration": 0.0833,
+            "frameCount": 7,
+            "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
@@ -138,6 +138,16 @@
             "frameWidth": 128,
             "frameHeight": 128
         }
+    },
+    "sounds": {
+        "hurt": "sakura_hurt",
+        "death": "sakura_death",
+        "attack_light": "sakura_attack_light",
+        "attack_medium": "sakura_attack_medium",
+        "attack_heavy": "sakura_attack_heavy",
+        "block_success": "sakura_block",
+        "jump": "sakura_jump",
+        "land": "sakura_land"
     },
     "hitboxes": {
         "idle": [

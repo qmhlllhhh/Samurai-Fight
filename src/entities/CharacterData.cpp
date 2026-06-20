@@ -4,7 +4,7 @@
 
 namespace SamuraiFight {
 
-bool CharacterData::loadFromJson(const std::string& jsonPath) {
+bool CharacterData::loadFromJson(const std::string &jsonPath) {
     nlohmann::json json;
     if (!JsonLoader::loadFromFile(jsonPath, json)) {
         std::cerr << "CharacterData: Failed to load " << jsonPath << std::endl;
@@ -19,19 +19,19 @@ bool CharacterData::loadFromJson(const std::string& jsonPath) {
 
         // 加载属性
         if (json.contains("stats")) {
-            const auto& statsJson = json["stats"];
+            const auto &statsJson = json["stats"];
             stats.maxHp = statsJson.value("maxHp", 100.0f);
             stats.maxStamina = statsJson.value("maxStamina", 100.0f);
             stats.moveSpeed = statsJson.value("moveSpeed", 300.0f);
             stats.jumpHeight = statsJson.value("jumpHeight", 400.0f);
             stats.staminaRecovery = statsJson.value("staminaRecovery", 0.5f);
-            stats.moveStaminaCost = statsJson.value("moveStaminaCost", 0.1f);
+            stats.moveStaminaRecovery = statsJson.value("moveStaminaRecovery", 0.1f);
             stats.jumpStaminaCost = statsJson.value("jumpStaminaCost", 10.0f);
         }
 
         // 加载动画
         if (json.contains("animations")) {
-            for (const auto& [key, animJson] : json["animations"].items()) {
+            for (const auto &[key, animJson] : json["animations"].items()) {
                 AnimationData anim;
                 anim.spriteSheet = animJson.value("spriteSheet", "");
                 anim.frameCount = animJson.value("frameCount", 1);
@@ -45,9 +45,9 @@ bool CharacterData::loadFromJson(const std::string& jsonPath) {
 
         // 加载碰撞框
         if (json.contains("hitboxes")) {
-            for (const auto& [state, hitboxArray] : json["hitboxes"].items()) {
+            for (const auto &[state, hitboxArray] : json["hitboxes"].items()) {
                 std::vector<HitboxData> hitboxList;
-                for (const auto& hitboxJson : hitboxArray) {
+                for (const auto &hitboxJson : hitboxArray) {
                     HitboxData hitbox;
                     hitbox.x = hitboxJson.value("x", 0.0f);
                     hitbox.y = hitboxJson.value("y", 0.0f);
@@ -65,7 +65,7 @@ bool CharacterData::loadFromJson(const std::string& jsonPath) {
 
         // 加载攻击数据
         if (json.contains("attacks")) {
-            for (const auto& [key, attackJson] : json["attacks"].items()) {
+            for (const auto &[key, attackJson] : json["attacks"].items()) {
                 AttackData attack;
                 attack.damage = attackJson.value("damage", 10.0f);
                 attack.startupFrames = attackJson.value("startupFrames", 3);
@@ -84,7 +84,7 @@ bool CharacterData::loadFromJson(const std::string& jsonPath) {
         std::cout << "CharacterData: Loaded character " << id << " from " << jsonPath << std::endl;
         return true;
 
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "CharacterData: Error parsing " << jsonPath << ": " << e.what() << std::endl;
         return false;
     }
