@@ -13,7 +13,7 @@ void PauseScene::onEnter() {
 
     // 获取默认字体
     try {
-        const sf::Font &font = ResourceManager::getInstance().getDefaultFont();
+        const sf::Font &font = ResourceManager::getInstance().getFont("defaultBold");
 
         // 设置暂停文本
         m_pauseText = std::make_unique<sf::Text>(font);

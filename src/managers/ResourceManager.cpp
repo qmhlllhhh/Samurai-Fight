@@ -11,7 +11,7 @@ ResourceManager &ResourceManager::getInstance() {
 }
 
 ResourceManager::ResourceManager()
-    : m_defaultFontId("default") {
+    : m_defaultFontId("default"), m_defaultBoldFontId("defaultBold"), m_chFontId("ch") {
 }
 
 ResourceManager::~ResourceManager() {
@@ -20,7 +20,8 @@ ResourceManager::~ResourceManager() {
 
 bool ResourceManager::initialize() {
     // 尝试加载默认字体
-    std::string fontPath = "assets/fonts/pixel_font.ttf";
+
+    std::string fontPath = "assets/fonts/Pixel.ttf";
 
     if (!loadFont(m_defaultFontId, fontPath)) {
         std::cerr << "ResourceManager: Failed to load default font from " << fontPath << std::endl;
@@ -29,6 +30,12 @@ bool ResourceManager::initialize() {
         if (!createDefaultFont()) {
             std::cerr << "ResourceManager: Warning: No default font available" << std::endl;
         }
+    }
+    if (!loadFont(m_defaultBoldFontId, (fontPath = "assets/fonts/Pixel-Bold.ttf"))) {
+        std::cerr << "ResourceManager: Failed to load default-Bold font from " << fontPath << std::endl;
+    }
+    if (!loadFont(m_chFontId, (fontPath = "assets/fonts/ch.ttf"))) {
+        std::cerr << "ResourceManager: Failed to load ch font from " << fontPath << std::endl;
     }
 
     // 尝试加载背景图

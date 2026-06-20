@@ -1,7 +1,7 @@
 #include "MainMenuScene.h"
 #include "../core/Constants.h"
 #include "../managers/ResourceManager.h"
-#include "BattleScene.h"
+#include "CharacterSelectScene.h"
 
 #include <iostream>
 
@@ -21,7 +21,7 @@ void MainMenuScene::onEnter() {
 
     // 获取默认字体
     try {
-        const sf::Font &font = ResourceManager::getInstance().getDefaultFont();
+        const sf::Font &font = ResourceManager::getInstance().getFont("defaultBold");
 
         // 设置标题
         m_titleText = std::make_unique<sf::Text>(font);
@@ -257,8 +257,8 @@ void MainMenuScene::executeCurrentItem() {
     switch (action) {
     case MenuItem::StartGame:
         std::cout << "MainMenuScene: Start Game selected" << std::endl;
-        // 切换到战斗场景
-        m_nextScene = std::make_unique<BattleScene>();
+        // 切换到角色选择场景
+        m_nextScene = std::make_unique<CharacterSelectScene>();
         m_popSceneCount = 1;
         break;
 

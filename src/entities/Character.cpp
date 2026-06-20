@@ -72,7 +72,7 @@ void Character::initializeComponents() {
 }
 
 void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
-                            bool attackLight, bool attackMedium, bool attackHeavy, bool block) {
+                            bool attackLight, bool attackMedium, bool attackHeavy, bool block, bool roll) {
 
     if (moveLeft && moveRight) {
         moveLeft = moveRight = 0;
@@ -115,9 +115,21 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
 
     // ========== 地面状态处理 ==========
 
+    // ========== 死亡状态处理 ==========
+    if (currentState == CharacterStateType::Dead) {
+        // 死亡状态下不接受任何输入
+        return;
+    }
+
     // ========== 受击状态处理 ==========
     if (currentState == CharacterStateType::Hurt) {
         // 受击状态下不接受任何输入
+        return;
+    }
+
+    // ========== 翻滚状态处理 ==========
+    if (currentState == CharacterStateType::Roll) {
+        // 翻滚期间不接受任何输入，等待自动结束
         return;
     }
 
@@ -195,6 +207,12 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
             changeState(CharacterStateType::AttackLight);
             return;
         }
+    }
+
+    // 翻滚（地面和空中都可以，需要体力>20%）
+    if (roll && m_stamina && m_stamina->canEnterStaminaState()) {
+        changeState(CharacterStateType::Roll);
+        return;
     }
 
     // 跳跃优先级最高（需要体力大于20%阈值）
@@ -330,6 +348,9 @@ void Character::update(float deltaTime) {
             break;
         case CharacterStateType::Block:
             stateName = "block";
+            break;
+        case CharacterStateType::Roll:
+            stateName = "roll";
             break;
         default:
             stateName = "idle";
@@ -600,10 +621,11 @@ void Character::takeDamage(float damage, int stunFrames) {
                   << " (HP: " << m_health->getCurrentHp() << "/" << m_health->getMaxHp() << ")"
                   << ", stun for " << stunFrames << " frames" << std::endl;
 
-        // 如果死亡，进入胜利/失败状态（后续实现）
+        // 如果死亡，进入死亡状态
         if (m_health->isDead()) {
             std::cout << "Character " << m_data.name << " is dead!" << std::endl;
-            // TODO: 进入死亡状态
+            // 进入死亡状态
+            changeState(CharacterStateType::Dead);
         } else {
             // 进入受击硬直状态
             triggerHurt(stunFrames);

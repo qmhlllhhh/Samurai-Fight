@@ -121,6 +121,22 @@
             "loop": true,
             "frameWidth": 128,
             "frameHeight": 128
+        },
+        "roll": {
+            "spriteSheet": "assets/characters/sakura/roll.png",
+            "frameCount": 4,
+            "frameDuration": 0.0833,
+            "loop": false,
+            "frameWidth": 128,
+            "frameHeight": 128
+        },
+        "death": {
+            "spriteSheet": "assets/characters/sakura/dead.png",
+            "frameCount": 3,
+            "frameDuration": 0.4,
+            "loop": false,
+            "frameWidth": 128,
+            "frameHeight": 128
         }
     },
     "hitboxes": {
@@ -242,6 +258,24 @@
             }
         ],
         "block": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
+            }
+        ],
+        "roll": [
+            {
+                "x": -45,
+                "y": -202.5,
+                "width": 90,
+                "height": 187.5,
+                "type": "hurtbox"
+            }
+        ],
+        "death": [
             {
                 "x": -45,
                 "y": -202.5,

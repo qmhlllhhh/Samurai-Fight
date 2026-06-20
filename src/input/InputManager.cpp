@@ -52,6 +52,7 @@ void InputManager::update(sf::RenderWindow& /*window*/) {
     m_player1Input.attackHeavy = checkKey1("attackHeavy");
     m_player1Input.attackSpecial = checkKey1("attackSpecial");
     m_player1Input.block = checkKey1("block");
+    m_player1Input.roll = checkKey1("roll");
 
     // 更新玩家2输入
     auto checkKey2 = [this](const std::string& action) -> bool {
@@ -71,6 +72,7 @@ void InputManager::update(sf::RenderWindow& /*window*/) {
     m_player2Input.attackHeavy = checkKey2("attackHeavy");
     m_player2Input.attackSpecial = checkKey2("attackSpecial");
     m_player2Input.block = checkKey2("block");
+    m_player2Input.roll = checkKey2("roll");
 
     // 更新全局输入
     if (m_globalKeys.find("pause") != m_globalKeys.end()) {
@@ -91,7 +93,7 @@ bool InputManager::isPausePressed() const {
 }
 
 void InputManager::loadDefaultKeyBindings() {
-    // 玩家1默认键位 (WASD + JKLI)
+    // 玩家1默认键位 (WASD + JKLI + O翻滚)
     m_player1Keys["moveLeft"] = sf::Keyboard::Key::A;
     m_player1Keys["moveRight"] = sf::Keyboard::Key::D;
     m_player1Keys["jump"] = sf::Keyboard::Key::W;
@@ -101,6 +103,7 @@ void InputManager::loadDefaultKeyBindings() {
     m_player1Keys["attackHeavy"] = sf::Keyboard::Key::L;
     m_player1Keys["attackSpecial"] = sf::Keyboard::Key::U;
     m_player1Keys["block"] = sf::Keyboard::Key::I;
+    m_player1Keys["roll"] = sf::Keyboard::Key::O;
 
     // 玩家2默认键位 (方向键 + 小键盘)
     m_player2Keys["moveLeft"] = sf::Keyboard::Key::Left;
@@ -112,6 +115,7 @@ void InputManager::loadDefaultKeyBindings() {
     m_player2Keys["attackHeavy"] = sf::Keyboard::Key::Numpad3;
     m_player2Keys["attackSpecial"] = sf::Keyboard::Key::Numpad4;
     m_player2Keys["block"] = sf::Keyboard::Key::Numpad5;
+    m_player2Keys["roll"] = sf::Keyboard::Key::Numpad6;
 
     // 全局键位
     m_globalKeys["pause"] = sf::Keyboard::Key::Escape;

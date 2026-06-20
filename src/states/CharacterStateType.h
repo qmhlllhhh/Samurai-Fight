@@ -21,6 +21,8 @@ enum class CharacterStateType {
     AttackHeavy,    ///< 重攻击
     Block,          ///< 防御
     Hurt,           ///< 受击
+    Roll,           ///< 翻滚
+    Dead,           ///< 死亡
     Victory         ///< 胜利
 };
 

@@ -170,7 +170,9 @@ class ResourceManager {
     std::unordered_map<std::string, sf::Font> m_fonts;               ///< 字体缓存
     std::unordered_map<std::string, sf::SoundBuffer> m_soundBuffers; ///< 音效缓存
 
-    std::string m_defaultFontId; ///< 默认字体ID
+    std::string m_defaultFontId;     ///< 默认字体ID
+    std::string m_defaultBoldFontId; ///< 默认加粗字体ID
+    std::string m_chFontId;          ///< 中文字体ID
 
     /**
      * @brief 创建默认字体（如果无法加载外部字体）

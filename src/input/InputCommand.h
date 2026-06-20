@@ -20,7 +20,8 @@ enum class InputAction {
     AttackMedium,   ///< 中攻击
     AttackHeavy,    ///< 重攻击
     AttackSpecial,  ///< 特殊技
-    Block           ///< 防御
+    Block,          ///< 防御
+    Roll            ///< 翻滚
 };
 
 /**
@@ -39,6 +40,7 @@ struct InputState {
     bool attackHeavy = false;
     bool attackSpecial = false;
     bool block = false;
+    bool roll = false;
 
     /**
      * @brief 重置所有输入
@@ -53,6 +55,7 @@ struct InputState {
         attackHeavy = false;
         attackSpecial = false;
         block = false;
+        roll = false;
     }
 };
 
