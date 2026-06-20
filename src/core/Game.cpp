@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "../managers/AudioManager.h"
 #include "../scenes/MainMenuScene.h"
 
 #include <iostream>
@@ -37,6 +38,11 @@ bool Game::initialize() {
     // 初始化资源管理器（使用单例）
     if (!ResourceManager::getInstance().initialize()) {
         std::cerr << "Game: Warning - ResourceManager initialization had issues" << std::endl;
+    }
+
+    // 初始化音频管理器
+    if (!AudioManager::getInstance().initialize()) {
+        std::cerr << "Game: Warning - AudioManager initialization had issues" << std::endl;
     }
 
     // 创建场景管理器
@@ -122,6 +128,9 @@ void Game::shutdown() {
     m_configManager.reset();
     m_frameTimer.reset();
     m_window.reset();
+
+    // 清理音频管理器
+    AudioManager::getInstance().cleanup();
 
     // 清理资源管理器单例
     ResourceManager::getInstance().clear();
@@ -225,6 +234,9 @@ void Game::update(float deltaTime) {
     if (!m_sceneManager) {
         return;
     }
+
+    // 更新音频管理器（处理淡入淡出等）
+    AudioManager::getInstance().update(deltaTime);
 
     // 更新场景管理器
     m_sceneManager->update(deltaTime);

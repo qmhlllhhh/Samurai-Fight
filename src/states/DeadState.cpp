@@ -1,5 +1,6 @@
 #include "DeadState.h"
 #include "../entities/Character.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -24,6 +25,10 @@ void DeadState::onEnter() {
     // 重置状态
     m_animationFinished = false;
     m_frameCount = 0;
+
+    // 播放死亡音效
+    std::string characterId = m_owner->getData().id;
+    AudioManager::getInstance().playCharacterSound(characterId, "death");
 
     std::cout << "DeadState: Character " << m_owner->getPlayerIndex() << " has died" << std::endl;
 }

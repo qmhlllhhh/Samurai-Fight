@@ -1,6 +1,7 @@
 #include "CharacterSelectScene.h"
 #include "../core/Constants.h"
 #include "../entities/CharacterFactory.h"
+#include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
 #include "BattleScene.h"
 #include <filesystem>
@@ -154,8 +155,9 @@ void CharacterSelectScene::handlePlayer1Input() {
     // S 取消确认（优先处理）
     bool sPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S);
     if (sPressed && !m_p1CancelPressed && m_player1Selection.confirmed) {
+        AudioManager::getInstance().playSound("cancel");
         m_player1Selection.confirmed = false;
-        m_readyToStart = false;  // 重置准备状态
+        m_readyToStart = false; // 重置准备状态
         std::cout << "CharacterSelectScene: Player 1 cancelled selection" << std::endl;
     }
     m_p1CancelPressed = sPressed;
@@ -167,6 +169,7 @@ void CharacterSelectScene::handlePlayer1Input() {
     // A 选择角色（只在按键刚按下时触发）
     bool aPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A);
     if (aPressed && !m_p1LeftPressed) {
+        AudioManager::getInstance().playSound("cursor");
         m_player1Selection.characterIndex--;
         if (m_player1Selection.characterIndex < 0) {
             m_player1Selection.characterIndex = static_cast<int>(m_availableCharacters.size()) - 1;
@@ -177,6 +180,7 @@ void CharacterSelectScene::handlePlayer1Input() {
     // D 选择角色
     bool dPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D);
     if (dPressed && !m_p1RightPressed) {
+        AudioManager::getInstance().playSound("cursor");
         m_player1Selection.characterIndex++;
         if (m_player1Selection.characterIndex >= static_cast<int>(m_availableCharacters.size())) {
             m_player1Selection.characterIndex = 0;
@@ -187,6 +191,7 @@ void CharacterSelectScene::handlePlayer1Input() {
     // W 确认选择
     bool wPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W);
     if (wPressed && !m_p1ConfirmPressed) {
+        AudioManager::getInstance().playSound("select");
         m_player1Selection.confirmed = true;
         std::cout << "CharacterSelectScene: Player 1 confirmed '"
                   << m_characterIds[m_player1Selection.characterIndex] << "'" << std::endl;
@@ -198,8 +203,9 @@ void CharacterSelectScene::handlePlayer2Input() {
     // Down 取消确认（优先处理）
     bool downPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down);
     if (downPressed && !m_p2CancelPressed && m_player2Selection.confirmed) {
+        AudioManager::getInstance().playSound("cancel");
         m_player2Selection.confirmed = false;
-        m_readyToStart = false;  // 重置准备状态
+        m_readyToStart = false; // 重置准备状态
         std::cout << "CharacterSelectScene: Player 2 cancelled selection" << std::endl;
     }
     m_p2CancelPressed = downPressed;
@@ -211,6 +217,7 @@ void CharacterSelectScene::handlePlayer2Input() {
     // Left 选择角色
     bool leftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left);
     if (leftPressed && !m_p2LeftPressed) {
+        AudioManager::getInstance().playSound("cursor");
         m_player2Selection.characterIndex--;
         if (m_player2Selection.characterIndex < 0) {
             m_player2Selection.characterIndex = static_cast<int>(m_availableCharacters.size()) - 1;
@@ -221,6 +228,7 @@ void CharacterSelectScene::handlePlayer2Input() {
     // Right 选择角色
     bool rightPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right);
     if (rightPressed && !m_p2RightPressed) {
+        AudioManager::getInstance().playSound("cursor");
         m_player2Selection.characterIndex++;
         if (m_player2Selection.characterIndex >= static_cast<int>(m_availableCharacters.size())) {
             m_player2Selection.characterIndex = 0;
@@ -231,6 +239,7 @@ void CharacterSelectScene::handlePlayer2Input() {
     // Up 确认选择
     bool upPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up);
     if (upPressed && !m_p2ConfirmPressed) {
+        AudioManager::getInstance().playSound("select");
         m_player2Selection.confirmed = true;
         std::cout << "CharacterSelectScene: Player 2 confirmed '"
                   << m_characterIds[m_player2Selection.characterIndex] << "'" << std::endl;

@@ -139,6 +139,16 @@
             "frameHeight": 128
         }
     },
+    "sounds": {
+        "hurt": "sakura_hurt",
+        "death": "sakura_death",
+        "attack_light": "sakura_attack_light",
+        "attack_medium": "sakura_attack_medium",
+        "attack_heavy": "sakura_attack_heavy",
+        "block_success": "sakura_block",
+        "jump": "sakura_jump",
+        "land": "sakura_land"
+    },
     "hitboxes": {
         "idle": [
             {

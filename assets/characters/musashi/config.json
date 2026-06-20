@@ -131,6 +131,16 @@
             "frameHeight": 128
         }
     },
+    "sounds": {
+        "hurt": "musashi_hurt",
+        "death": "musashi_death",
+        "attack_light": "musashi_attack_light",
+        "attack_medium": "musashi_attack_medium",
+        "attack_heavy": "musashi_attack_heavy",
+        "block_success": "musashi_block",
+        "jump": "musashi_jump",
+        "land": "musashi_land"
+    },
     "hitboxes": {
         "idle": [
             {

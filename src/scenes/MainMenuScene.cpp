@@ -1,5 +1,6 @@
 #include "MainMenuScene.h"
 #include "../core/Constants.h"
+#include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
 #include "CharacterSelectScene.h"
 
@@ -18,6 +19,11 @@ MainMenuScene::~MainMenuScene() {
 
 void MainMenuScene::onEnter() {
     std::cout << "MainMenuScene: Entered" << std::endl;
+
+    // 结束正在播放的音乐
+    AudioManager::getInstance().stopMusic(1.0f);
+    // 播放背景音乐
+    AudioManager::getInstance().playSceneMusic("menu", 2.0f);
 
     // 获取默认字体
     try {
@@ -194,6 +200,12 @@ void MainMenuScene::updateMenuSelection(const sf::Vector2f &mousePos) {
         // 检查鼠标是否悬停在菜单项上
         if (mousePos.x >= 0 && mousePos.y >= 0 && bounds.contains(mousePos)) {
             // 鼠标在这个菜单项上
+
+            // 如果切换菜单项，播放音效
+            if (m_selectedIndex != static_cast<int>(i)) {
+                AudioManager::getInstance().playSound("cursor");
+            }
+
             m_selectedIndex = static_cast<int>(i);
             m_mouseHovering = true;
             foundHover = true;
@@ -232,6 +244,7 @@ void MainMenuScene::handleMenuClick() {
 }
 
 void MainMenuScene::selectPreviousItem() {
+    AudioManager::getInstance().playSound("cursor");
     m_selectedIndex--;
     if (m_selectedIndex < 0) {
         m_selectedIndex = static_cast<int>(m_menuItems.size()) - 1;
@@ -240,6 +253,7 @@ void MainMenuScene::selectPreviousItem() {
 }
 
 void MainMenuScene::selectNextItem() {
+    AudioManager::getInstance().playSound("cursor");
     m_selectedIndex++;
     if (m_selectedIndex >= static_cast<int>(m_menuItems.size())) {
         m_selectedIndex = 0;
@@ -251,6 +265,8 @@ void MainMenuScene::executeCurrentItem() {
     if (m_selectedIndex < 0 || m_selectedIndex >= static_cast<int>(m_menuActions.size())) {
         return;
     }
+
+    AudioManager::getInstance().playSound("select");
 
     MenuItem action = m_menuActions[m_selectedIndex];
 

@@ -1,6 +1,7 @@
 #include "BattleScene.h"
 #include "../core/Constants.h"
 #include "../entities/CharacterFactory.h"
+#include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
 #include "../states/AttackState.h"
 #include "../states/BlockState.h"
@@ -27,6 +28,11 @@ BattleScene::~BattleScene() {
 
 void BattleScene::onEnter() {
     std::cout << "BattleScene: Entered" << std::endl;
+
+    // 结束正在播放的音乐
+    AudioManager::getInstance().stopMusic(1.0f);
+    // 播放背景音乐
+    AudioManager::getInstance().playSceneMusic("battle", 2.0f);
 
     // 初始化输入管理器
     m_inputManager = std::make_unique<InputManager>();
@@ -425,6 +431,9 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
 
                         // 对防御者造成伤害
                         defenderChar->takeDamage(damage, stunFrames);
+
+                        // 播放命中音效
+                        AudioManager::getInstance().playSound("hit");
 
                         // 增加命中次数
                         attackState->incrementHitCount();

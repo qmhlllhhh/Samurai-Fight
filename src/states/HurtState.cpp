@@ -1,5 +1,6 @@
 #include "HurtState.h"
 #include "../entities/Character.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -26,6 +27,10 @@ void HurtState::onEnter() {
     // 重置状态
     m_stunFinished = false;
     m_frameCount = 0;
+
+    // 播放受击音效
+    std::string characterId = m_owner->getData().id;
+    AudioManager::getInstance().playCharacterSound(characterId, "hurt");
 
     std::cout << "HurtState: Entered with " << m_stunFrames << " frames stun" << std::endl;
 }
