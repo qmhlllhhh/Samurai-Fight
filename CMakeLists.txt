@@ -39,6 +39,7 @@ set(SOURCES
     src/scenes/CharacterSelectScene.cpp
     src/scenes/BattleScene.cpp
     src/scenes/PauseScene.cpp
+    src/scenes/SettingsScene.cpp
 
     # Entities
     src/entities/Entity.cpp

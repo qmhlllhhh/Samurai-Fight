@@ -2,6 +2,7 @@
 #include "../core/Constants.h"
 #include "../managers/ResourceManager.h"
 #include "CharacterSelectScene.h"
+#include "SettingsScene.h"
 
 #include <iostream>
 
@@ -264,10 +265,8 @@ void MainMenuScene::executeCurrentItem() {
 
     case MenuItem::Settings:
         std::cout << "MainMenuScene: Settings selected" << std::endl;
-        // TODO: 切换到设置场景
-        // m_nextScene = std::make_unique<SettingsScene>();
-        // m_popSceneCount=1
-        std::cout << "MainMenuScene: SettingsScene not implemented yet" << std::endl;
+        m_nextScene = std::make_unique<SettingsScene>();
+        m_popSceneCount = 0;  // push 叠加（返回时回到主菜单）
         break;
 
     case MenuItem::Exit:
