@@ -29,7 +29,7 @@ constexpr int INPUT_BUFFER_SIZE = 12; // 12帧缓冲窗口
 
 // 体力消耗
 constexpr float STAMINA_RECOVERY_RATE = 0.5f;    // 站立时每帧恢复
-constexpr float MOVE_STAMINA_COST = 0.1f;        // 移动每帧消耗
+constexpr float MOVE_STAMINA_RECOVERY = 0.1f;    // 移动每帧恢复
 constexpr float JUMP_STAMINA_COST = 10.0f;       // 跳跃消耗
 constexpr float BLOCK_STAMINA_MULTIPLIER = 0.5f; // 防御时体力消耗倍率
 
@@ -42,13 +42,13 @@ constexpr int CHARACTER_HEIGHT = 128;
 constexpr float CHARACTER_TARGET_SIZE = 360.0f;
 
 // 物理相关
-constexpr float GRAVITY = 800.0f;             // 重力加速度 (像素/秒²)
-constexpr float GROUND_LEVEL = 550.0f;        // 地面Y坐标
+constexpr float GRAVITY = 1500.0f;            // 重力加速度 (像素/秒²)
+constexpr float GROUND_LEVEL = 600.0f;        // 地面Y坐标
 constexpr float DEFAULT_MOVE_SPEED = 300.0f;  // 默认移动速度
-constexpr float DEFAULT_JUMP_HEIGHT = 400.0f; // 默认跳跃高度
+constexpr float DEFAULT_JUMP_HEIGHT = 900.0f; // 默认跳跃高度 (空中1.2秒)
 
 // 场景背景数量
-constexpr int BACKGROUND_COUNT = 5;
+constexpr int BACKGROUND_COUNT = 3;
 
 // 默认音量
 constexpr float DEFAULT_MASTER_VOLUME = 1.0f;

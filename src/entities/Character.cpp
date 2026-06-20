@@ -97,6 +97,26 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
             m_facingRight = false;
         }
 
+        // 翻滚（空中，需要体力>20%）
+        if (roll && m_stamina && m_stamina->canEnterStaminaState()) {
+            changeState(CharacterStateType::Roll);
+            return;
+        }
+
+        // 空中攻击
+        if (attackHeavy) {
+            changeState(CharacterStateType::AttackHeavy);
+            return;
+        }
+        if (attackMedium) {
+            changeState(CharacterStateType::AttackMedium);
+            return;
+        }
+        if (attackLight) {
+            changeState(CharacterStateType::AttackLight);
+            return;
+        }
+
         // 空中移动控制（降低速度）
         float airMoveSpeed = m_data.stats.moveSpeed * 0.8f;
         sf::Vector2f velocity = getVelocity();
@@ -209,7 +229,7 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         }
     }
 
-    // 翻滚（地面和空中都可以，需要体力>20%）
+    // 翻滚（空中地面均可，需要体力>20%）
     if (roll && m_stamina && m_stamina->canEnterStaminaState()) {
         changeState(CharacterStateType::Roll);
         return;
@@ -369,7 +389,7 @@ void Character::update(float deltaTime) {
             isMoving,
             isJumping,
             isStanding,
-            m_data.stats.moveStaminaCost,
+            m_data.stats.moveStaminaRecovery,
             m_data.stats.staminaRecovery,
             m_data.stats.jumpStaminaCost);
     }

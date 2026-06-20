@@ -16,7 +16,7 @@ namespace SamuraiFight {
  * 包含当前体力值、最大体力值、消耗和恢复等功能
  */
 class StaminaComponent {
-public:
+  public:
     /**
      * @brief 构造函数
      *
@@ -51,12 +51,12 @@ public:
      * @param isMoving 是否在移动
      * @param isJumping 是否在跳跃
      * @param isStanding 是否站立
-     * @param moveCostPerFrame 移动每帧消耗
+     * @param moveRecoveryPerFrame 移动每帧恢复
      * @param recoveryPerFrame 站立每帧恢复
      * @param jumpCost 跳跃消耗
      */
     void update(bool isMoving, bool isJumping, bool isStanding,
-                float moveCostPerFrame, float recoveryPerFrame, float jumpCost);
+                float moveRecoveryPerFrame, float recoveryPerFrame, float jumpCost);
 
     /**
      * @brief 获取当前体力值
@@ -131,7 +131,7 @@ public:
      */
     void setMaxStamina(float maxStamina);
 
-private:
+  private:
     float m_currentStamina; ///< 当前体力值
     float m_maxStamina;     ///< 最大体力值
     float m_threshold;      ///< 体力阈值（用于判断是否可以进入需要体力的状态）

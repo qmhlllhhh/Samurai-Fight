@@ -4,10 +4,9 @@
 namespace SamuraiFight {
 
 StaminaComponent::StaminaComponent(float maxStamina)
-    : m_currentStamina(maxStamina)
-    , m_maxStamina(maxStamina)
-    , m_threshold(maxStamina * 0.2f)  // 阈值为最大体力的20%
-    , m_wasJumping(false) {
+    : m_currentStamina(maxStamina), m_maxStamina(maxStamina), m_threshold(maxStamina * 0.2f) // 阈值为最大体力的20%
+      ,
+      m_wasJumping(false) {
 }
 
 StaminaComponent::~StaminaComponent() {
@@ -43,7 +42,7 @@ float StaminaComponent::recover(float amount) {
 }
 
 void StaminaComponent::update(bool isMoving, bool isJumping, bool isStanding,
-                               float moveCostPerFrame, float recoveryPerFrame, float jumpCost) {
+                              float moveRecoveryPerFrame, float recoveryPerFrame, float jumpCost) {
     // 处理跳跃消耗（只在跳跃开始时消耗）
     if (isJumping && !m_wasJumping) {
         consume(jumpCost);
@@ -52,11 +51,11 @@ void StaminaComponent::update(bool isMoving, bool isJumping, bool isStanding,
 
     // 处理移动消耗
     if (isMoving) {
-        consume(moveCostPerFrame);
+        recover(moveRecoveryPerFrame);
     }
 
     // 站立时恢复体力
-    if (isStanding && !isMoving) {
+    if (isStanding) {
         recover(recoveryPerFrame);
     }
 }
@@ -103,7 +102,7 @@ void StaminaComponent::reset() {
 
 void StaminaComponent::setMaxStamina(float maxStamina) {
     m_maxStamina = maxStamina;
-    m_threshold = maxStamina * 0.2f;  // 更新阈值为20%
+    m_threshold = maxStamina * 0.2f; // 更新阈值为20%
     // 如果当前体力值超过新的最大值，调整当前体力值
     m_currentStamina = std::min(m_currentStamina, m_maxStamina);
 }

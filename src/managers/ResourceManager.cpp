@@ -40,14 +40,10 @@ bool ResourceManager::initialize() {
 
     // 尝试加载背景图
     std::string grass1Path = "assets/backgrounds/grass1.png";
-    std::string grass2Path = "assets/backgrounds/grass2.png";
     std::string grass3Path = "assets/backgrounds/grass3.png";
-    std::string forestPath = "assets/backgrounds/forest.png";
     std::string housePath = "assets/backgrounds/house.png";
     if (!loadTexture("grass1", grass1Path, 1) ||
-        !loadTexture("grass2", grass2Path, 1) ||
         !loadTexture("grass3", grass3Path, 1) ||
-        !loadTexture("forest", forestPath, 1) ||
         !loadTexture("house", housePath, 1)) {
         std::cerr << "ResourceManager: Warning: Some background textures failed to load" << std::endl;
     }

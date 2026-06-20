@@ -11,21 +11,15 @@
 namespace SamuraiFight {
 
 BattleScene::BattleScene()
-    : m_backgroundId{"grass3", "forest", "house", "grass1", "grass2"}
-    , m_window(nullptr)
-    , m_player1CharacterId("musashi")  // 默认角色
-    , m_player2CharacterId("sakura")   // 默认角色
-    , m_inputManager(nullptr)
-    , m_showDebug(true) {
+    : m_backgroundId{"grass3", "house", "grass1"}, m_window(nullptr), m_player1CharacterId("musashi") // 默认角色
+      ,
+      m_player2CharacterId("sakura") // 默认角色
+      ,
+      m_inputManager(nullptr), m_showDebug(false) {
 }
 
-BattleScene::BattleScene(const std::string& player1CharacterId, const std::string& player2CharacterId)
-    : m_backgroundId{"grass3", "forest", "house", "grass1", "grass2"}
-    , m_window(nullptr)
-    , m_player1CharacterId(player1CharacterId)
-    , m_player2CharacterId(player2CharacterId)
-    , m_inputManager(nullptr)
-    , m_showDebug(true) {
+BattleScene::BattleScene(const std::string &player1CharacterId, const std::string &player2CharacterId)
+    : m_backgroundId{"grass3", "house", "grass1"}, m_window(nullptr), m_player1CharacterId(player1CharacterId), m_player2CharacterId(player2CharacterId), m_inputManager(nullptr), m_showDebug(false) {
 }
 
 BattleScene::~BattleScene() {
@@ -268,12 +262,6 @@ void BattleScene::render(sf::RenderWindow &window) {
         window.clear(sf::Color(50, 50, 80));
     }
 
-    // 绘制地面（调试用）
-    sf::RectangleShape ground(sf::Vector2f(WINDOW_WIDTH, 5.0f));
-    ground.setPosition(sf::Vector2f(0.0f, GROUND_LEVEL));
-    ground.setFillColor(sf::Color(100, 100, 100));
-    window.draw(ground);
-
     // 绘制角色
     for (int i = 0; i < 2; ++i) {
         if (m_characters[i]) {
@@ -297,7 +285,14 @@ void BattleScene::render(sf::RenderWindow &window) {
 
     // 绘制调试信息
     if (m_showDebug && m_debugText) {
+
         window.draw(*m_debugText);
+
+        // 绘制地面
+        sf::RectangleShape ground(sf::Vector2f(WINDOW_WIDTH, 5.0f));
+        ground.setPosition(sf::Vector2f(0.0f, GROUND_LEVEL));
+        ground.setFillColor(sf::Color(100, 100, 100));
+        window.draw(ground);
     }
 }
 

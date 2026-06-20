@@ -1,15 +1,16 @@
 #include "RollState.h"
-#include "../entities/Character.h"
 #include "../core/Constants.h"
+#include "../entities/Character.h"
 #include <iostream>
 
 namespace SamuraiFight {
 
-RollState::RollState(Character* owner)
-    : CharacterState(owner, CharacterStateType::Roll)
-    , m_totalFrames(20)      // 翻滚持续20帧
-    , m_rollSpeed(600.0f)    // 翻滚速度（比走路快）
-    , m_facingRight(true) {
+RollState::RollState(Character *owner)
+    : CharacterState(owner, CharacterStateType::Roll), m_totalFrames(25) // 翻滚持续20帧
+      ,
+      m_rollSpeed(1000.0f) // 翻滚速度（比走路快）
+      ,
+      m_facingRight(true) {
 }
 
 RollState::~RollState() {
@@ -31,11 +32,13 @@ void RollState::onEnter() {
     } else {
         velocity.x = -m_rollSpeed;
     }
+    // 设置翻滚速度（竖直方向，空中时加速下落）
+    velocity.y = m_rollSpeed;
     m_owner->setVelocity(velocity);
 
     // 消耗体力
     if (m_owner->getStaminaComponent()) {
-        m_owner->getStaminaComponent()->consume(15.0f);  // 翻滚消耗15体力
+        m_owner->getStaminaComponent()->consume(15.0f); // 翻滚消耗15体力
     }
 
     // 重置帧计数
