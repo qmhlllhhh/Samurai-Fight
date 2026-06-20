@@ -13,9 +13,9 @@ namespace SamuraiFight {
  */
 enum class CharacterStateType {
     Idle,           ///< 站立
-    Move,           ///< 移动
+    Walk,           ///< 走路
+    Run,            ///< 跑步
     Jump,           ///< 跳跃
-    Crouch,         ///< 下蹲
     AttackLight,    ///< 轻攻击
     AttackMedium,   ///< 中攻击
     AttackHeavy,    ///< 重攻击

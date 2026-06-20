@@ -1,6 +1,7 @@
 #include "RollState.h"
 #include "../core/Constants.h"
 #include "../entities/Character.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -21,6 +22,9 @@ void RollState::onEnter() {
 
     // 播放翻滚动画
     m_owner->playAnimation("roll");
+
+    // 播放翻滚音效
+    AudioManager::getInstance().playCharacterSound(m_owner->getData().id, "roll");
 
     // 记录进入时的朝向
     m_facingRight = m_owner->isFacingRight();

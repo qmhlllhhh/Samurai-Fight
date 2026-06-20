@@ -7,6 +7,7 @@
 #include "../input/InputManager.h"
 #include "../ui/HealthBar.h"
 #include "../ui/StaminaBar.h"
+#include "../effects/ScreenShake.h"
 #include "Scene.h"
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -123,5 +124,8 @@ class BattleScene : public Scene {
     // 调试信息
     std::unique_ptr<sf::Text> m_debugText; ///< 调试文本
     bool m_showDebug;     ///< 是否显示调试信息
+
+    // 屏幕震动效果
+    ScreenShake m_screenShake; ///< 屏幕震动
 };
 } // namespace SamuraiFight

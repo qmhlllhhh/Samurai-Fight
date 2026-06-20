@@ -14,8 +14,8 @@ namespace SamuraiFight {
 enum class InputAction {
     MoveLeft,       ///< 向左移动
     MoveRight,      ///< 向右移动
+    MoveDown,       ///< 向下（用于移动触发条件）
     Jump,           ///< 跳跃
-    Crouch,         ///< 下蹲
     AttackLight,    ///< 轻攻击
     AttackMedium,   ///< 中攻击
     AttackHeavy,    ///< 重攻击
@@ -31,10 +31,11 @@ enum class InputAction {
  * 存储所有输入动作的当前状态
  */
 struct InputState {
-    bool moveLeft = false;
-    bool moveRight = false;
+    bool moveLeft = false;      ///< 走路向左（S + 左）
+    bool moveRight = false;     ///< 走路向右（S + 右）
+    bool runLeft = false;       ///< 跑步向左（仅左）
+    bool runRight = false;      ///< 跑步向右（仅右）
     bool jump = false;
-    bool crouch = false;
     bool attackLight = false;
     bool attackMedium = false;
     bool attackHeavy = false;
@@ -48,8 +49,9 @@ struct InputState {
     void reset() {
         moveLeft = false;
         moveRight = false;
+        runLeft = false;
+        runRight = false;
         jump = false;
-        crouch = false;
         attackLight = false;
         attackMedium = false;
         attackHeavy = false;

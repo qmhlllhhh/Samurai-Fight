@@ -57,9 +57,9 @@ set(SOURCES
     src/states/CharacterState.cpp
     src/states/StateMachine.cpp
     src/states/IdleState.cpp
-    src/states/MoveState.cpp
+    src/states/WalkState.cpp
+    src/states/RunState.cpp
     src/states/JumpState.cpp
-    src/states/CrouchState.cpp
     src/states/AttackState.cpp
     src/states/HurtState.cpp
     src/states/BlockState.cpp
@@ -69,6 +69,9 @@ set(SOURCES
 
     # Utils
     src/utils/JsonLoader.cpp
+
+    # Effects
+    src/effects/ScreenShake.cpp
 
     # Input
     src/input/InputManager.cpp
