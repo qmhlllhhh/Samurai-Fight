@@ -7,6 +7,8 @@
 #include "AttackState.h"
 #include "HurtState.h"
 #include "BlockState.h"
+#include "RollState.h"
+#include "DeadState.h"
 
 #include <iostream>
 
@@ -83,6 +85,10 @@ std::unique_ptr<CharacterState> StateMachine::createState(CharacterStateType sta
         return std::make_unique<HurtState>(m_owner, m_owner->getPendingStunFrames());
     case CharacterStateType::Block:
         return std::make_unique<BlockState>(m_owner);
+    case CharacterStateType::Roll:
+        return std::make_unique<RollState>(m_owner);
+    case CharacterStateType::Dead:
+        return std::make_unique<DeadState>(m_owner);
     default:
         std::cerr << "StateMachine: Unknown state type " << static_cast<int>(stateType) << std::endl;
         return nullptr;

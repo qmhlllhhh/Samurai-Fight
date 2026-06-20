@@ -53,9 +53,10 @@ public:
      * @param attackMedium 中攻击
      * @param attackHeavy 重攻击
      * @param block 是否防御
+     * @param roll 是否翻滚
      */
     void handleInput(bool moveLeft, bool moveRight, bool jump, bool crouch,
-                     bool attackLight, bool attackMedium, bool attackHeavy, bool block = false);
+                     bool attackLight, bool attackMedium, bool attackHeavy, bool block = false, bool roll = false);
 
     /**
      * @brief 更新角色逻辑

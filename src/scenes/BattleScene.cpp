@@ -11,7 +11,21 @@
 namespace SamuraiFight {
 
 BattleScene::BattleScene()
-    : m_backgroundId{"grass3", "forest", "house", "grass1", "grass2"}, m_window(nullptr), m_inputManager(nullptr), m_showDebug(true) {
+    : m_backgroundId{"grass3", "forest", "house", "grass1", "grass2"}
+    , m_window(nullptr)
+    , m_player1CharacterId("musashi")  // 默认角色
+    , m_player2CharacterId("sakura")   // 默认角色
+    , m_inputManager(nullptr)
+    , m_showDebug(true) {
+}
+
+BattleScene::BattleScene(const std::string& player1CharacterId, const std::string& player2CharacterId)
+    : m_backgroundId{"grass3", "forest", "house", "grass1", "grass2"}
+    , m_window(nullptr)
+    , m_player1CharacterId(player1CharacterId)
+    , m_player2CharacterId(player2CharacterId)
+    , m_inputManager(nullptr)
+    , m_showDebug(true) {
 }
 
 BattleScene::~BattleScene() {
@@ -60,19 +74,19 @@ void BattleScene::initializeCharacters() {
     CharacterFactory &factory = CharacterFactory::getInstance();
 
     // 创建玩家1角色
-    m_characters[0] = factory.createCharacter("musashi", 0);
+    m_characters[0] = factory.createCharacter(m_player1CharacterId, 0);
     if (m_characters[0]) {
-        std::cout << "BattleScene: Created player 1 character" << std::endl;
+        std::cout << "BattleScene: Created player 1 character '" << m_player1CharacterId << "'" << std::endl;
     } else {
-        std::cerr << "BattleScene: Failed to create player 1 character" << std::endl;
+        std::cerr << "BattleScene: Failed to create player 1 character '" << m_player1CharacterId << "'" << std::endl;
     }
 
     // 创建玩家2角色
-    m_characters[1] = factory.createCharacter("sakura", 1);
+    m_characters[1] = factory.createCharacter(m_player2CharacterId, 1);
     if (m_characters[1]) {
-        std::cout << "BattleScene: Created player 2 character" << std::endl;
+        std::cout << "BattleScene: Created player 2 character '" << m_player2CharacterId << "'" << std::endl;
     } else {
-        std::cerr << "BattleScene: Failed to create player 2 character" << std::endl;
+        std::cerr << "BattleScene: Failed to create player 2 character '" << m_player2CharacterId << "'" << std::endl;
     }
 
     // 初始化血条UI
@@ -184,7 +198,8 @@ void BattleScene::update(float deltaTime) {
                     input.attackLight,
                     input.attackMedium,
                     input.attackHeavy,
-                    input.block);
+                    input.block,
+                    input.roll);
             }
         }
     }
@@ -352,7 +367,15 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
         for (const auto &hurtbox : hurtboxes) {
             // 检查是否相交
             if (attackBox.rect.findIntersection(hurtbox.rect)) {
-                // 命中！检查防御者是否在防御状态
+                // 检查防御者是否在翻滚状态（翻滚期间无敌）
+                if (defenderChar->getCurrentStateType() == CharacterStateType::Roll) {
+                    // 翻滚期间无敌，不受到伤害
+                    attackState->incrementHitCount();
+                    std::cout << "BattleScene: Player " << defender + 1 << " is rolling, invincible!" << std::endl;
+                    return;
+                }
+
+                // 检查防御者是否在防御状态
                 bool defenderIsBlocking = (defenderChar->getCurrentStateType() == CharacterStateType::Block);
 
                 if (defenderIsBlocking) {

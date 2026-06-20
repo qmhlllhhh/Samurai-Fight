@@ -33,9 +33,17 @@ namespace SamuraiFight {
 class BattleScene : public Scene {
   public:
     /**
-     * @brief 构造函数
+     * @brief 默认构造函数
      */
     BattleScene();
+
+    /**
+     * @brief 带角色选择的构造函数
+     *
+     * @param player1CharacterId 玩家1角色ID
+     * @param player2CharacterId 玩家2角色ID
+     */
+    BattleScene(const std::string& player1CharacterId, const std::string& player2CharacterId);
 
     /**
      * @brief 析构函数
@@ -99,6 +107,10 @@ class BattleScene : public Scene {
     std::string m_backgroundId[BACKGROUND_COUNT];
     std::unique_ptr<sf::Sprite> m_background; ///< 战斗背景
     sf::RenderWindow *m_window;               ///< 游戏窗口指针
+
+    // 角色选择
+    std::string m_player1CharacterId;  ///< 玩家1角色ID
+    std::string m_player2CharacterId;  ///< 玩家2角色ID
 
     // 角色系统
     std::unique_ptr<Character> m_characters[2];  ///< 两个角色

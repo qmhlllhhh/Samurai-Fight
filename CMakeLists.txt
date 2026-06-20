@@ -36,6 +36,7 @@ set(SOURCES
     # Scenes
     src/scenes/Scene.cpp
     src/scenes/MainMenuScene.cpp
+    src/scenes/CharacterSelectScene.cpp
     src/scenes/BattleScene.cpp
     src/scenes/PauseScene.cpp
 
@@ -62,6 +63,8 @@ set(SOURCES
     src/states/HurtState.cpp
     src/states/BlockState.cpp
     src/states/HurtState.cpp
+    src/states/RollState.cpp
+    src/states/DeadState.cpp
 
     # Utils
     src/utils/JsonLoader.cpp
