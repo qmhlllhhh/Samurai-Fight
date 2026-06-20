@@ -293,6 +293,8 @@ void MainMenuScene::executeCurrentItem() {
         }
         m_popSceneCount = 1;
         break;
+    default:
+        break;
     }
 }
 

@@ -2,6 +2,7 @@
 #include "../core/Constants.h"
 #include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
+#include "SettingsScene.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -232,10 +233,8 @@ void PauseScene::executeCurrentItem() {
 
     case MenuItem::Settings:
         std::cout << "PauseScene: Settings selected" << std::endl;
-        // TODO: 切换到设置场景
-        // m_nextScene = std::make_unique<SettingsScene>();
-        // m_popSceneCount = 1;
-        std::cout << "PauseScene: SettingsScene not implemented yet" << std::endl;
+        m_nextScene = std::make_unique<SettingsScene>();
+        m_popSceneCount = 0;  // push 叠加（返回时回到暂停）
         break;
 
     case MenuItem::MainMenu:
@@ -243,6 +242,8 @@ void PauseScene::executeCurrentItem() {
         // 返回主菜单
         m_nextScene = std::make_unique<MainMenuScene>();
         m_popSceneCount = 2;
+        break;
+    default:
         break;
     }
 }

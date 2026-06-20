@@ -58,7 +58,8 @@ private:
     void handleRebindKey(sf::Keyboard::Scancode scancode);  ///< 处理重映射捕获的按键（用 scancode）
     std::string rebindPromptText() const;   ///< 当前重映射步骤的提示文本
     void updateSelection(const sf::Vector2f& mousePos);  ///< 鼠标悬停选中
-    void confirmSelection();                ///< 确认当前选中（Enter / 鼠标左键）
+    void confirmSelection();                ///< 确认当前选中（Enter）
+    void handleMouseClick(const sf::Vector2f& pos);  ///< 鼠标点击：音量项左减右加、Back/Rebind 确认
 
     std::unique_ptr<sf::Text> m_titleText;
     std::vector<std::unique_ptr<sf::Text>> m_itemTexts;

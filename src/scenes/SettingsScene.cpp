@@ -4,7 +4,7 @@
 #include "../input/InputManager.h"
 #include "../managers/ConfigManager.h"
 #include "../managers/ResourceManager.h"
-// #include "../managers/AudioManager.h"  // TODO: 组员 AudioManager 合并后启用实时通路
+#include "../managers/AudioManager.h"
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -173,10 +173,11 @@ void SettingsScene::handleEvents(sf::RenderWindow& window) {
             }
         }
 
-        // 鼠标左键 = 确认
+        // 鼠标左键 = 点击操作（音量项左减右加 / Back·Rebind 确认）
         if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
-            if (mb->button == sf::Mouse::Button::Left && m_mouseHovering) {
-                confirmSelection();
+            if (mb->button == sf::Mouse::Button::Left) {
+                sf::Vector2f clickPos = sf::Vector2f(sf::Mouse::getPosition(window));
+                handleMouseClick(clickPos);
             }
         }
 
@@ -295,15 +296,15 @@ void SettingsScene::applyVolume(SettingsItem item, float v) {
     switch (item) {
     case SettingsItem::MasterVolume:
         cfg.setMasterVolume(v);
-        // AudioManager::getInstance().setMasterVolume(v);  // TODO: 组员 AudioManager 合并后启用
+        AudioManager::getInstance().setMasterVolume(v);
         break;
     case SettingsItem::BGMVolume:
         cfg.setBGMVolume(v);
-        // AudioManager::getInstance().setBGMVolume(v);  // TODO: 组员 AudioManager 合并后启用
+        AudioManager::getInstance().setBGMVolume(v);
         break;
     case SettingsItem::SFXVolume:
         cfg.setSFXVolume(v);
-        // AudioManager::getInstance().setSFXVolume(v);  // TODO: 组员 AudioManager 合并后启用
+        AudioManager::getInstance().setSFXVolume(v);
         break;
     default:
         break;
@@ -378,7 +379,28 @@ void SettingsScene::confirmSelection() {
     } else if (item == SettingsItem::RebindKeys) {
         enterRebindMode();
     }
-    // 音量项：点击仅选中（高亮），调值用 Left/Right 或滚轮
+}
+
+void SettingsScene::handleMouseClick(const sf::Vector2f& pos) {
+    for (size_t i = 0; i < m_itemTexts.size(); ++i) {
+        if (!m_itemTexts[i]) continue;
+        sf::FloatRect bounds = m_itemTexts[i]->getGlobalBounds();
+        if (bounds.contains(pos)) {
+            m_selectedIndex = static_cast<int>(i);
+            SettingsItem item = m_itemActions[i];
+            if (item == SettingsItem::Back) {
+                backAndSave();
+            } else if (item == SettingsItem::RebindKeys) {
+                enterRebindMode();
+            } else {
+                // 音量项：点击左半减、右半加（模拟滑块）
+                float centerX = bounds.position.x + bounds.size.x / 2.0f;
+                adjustCurrentVolume(pos.x < centerX ? -0.1f : 0.1f);
+            }
+            refreshItemTexts();
+            return;
+        }
+    }
 }
 
 } // namespace SamuraiFight
