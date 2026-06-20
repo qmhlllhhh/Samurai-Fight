@@ -28,8 +28,11 @@ void IdleState::onExit() {
 void IdleState::update(float deltaTime) {
     CharacterState::update(deltaTime);
 
-    // 站立时恢复体力（阶段3实现）
-    // m_owner->recoverStamina(deltaTime);
+    // 在地面时速度为0
+    sf::Vector2f vel = m_owner->getVelocity();
+    if (m_owner->isOnGround()) {
+        m_owner->setVelocity(sf::Vector2f(0.0f, vel.y));
+    }
 }
 
 } // namespace SamuraiFight

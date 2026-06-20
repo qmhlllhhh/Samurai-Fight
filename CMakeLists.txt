@@ -32,6 +32,7 @@ set(SOURCES
     src/managers/ResourceManager.cpp
     src/managers/SceneManager.cpp
     src/managers/ConfigManager.cpp
+    src/managers/AudioManager.cpp
 
     # Scenes
     src/scenes/Scene.cpp

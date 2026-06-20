@@ -12,7 +12,7 @@
         "winsNeeded": 2
     },
     "audio": {
-        "masterVolume": 1.0,
+        "masterVolume": 0.5,
         "bgmVolume": 0.8,
         "sfxVolume": 1.0
     }

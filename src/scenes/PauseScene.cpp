@@ -1,5 +1,6 @@
 #include "PauseScene.h"
 #include "../core/Constants.h"
+#include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
 #include <iostream>
 
@@ -120,6 +121,10 @@ void PauseScene::updateMenuSelection(const sf::Vector2f &mousePos) {
         // 检查鼠标是否悬停在菜单项上
         if (mousePos.x >= 0 && mousePos.y >= 0 && bounds.contains(mousePos)) {
             // 鼠标在这个菜单项上
+
+            if (m_selectedIndex != static_cast<int>(i)) {
+                AudioManager::getInstance().playSound("cursor");
+            }
             m_selectedIndex = static_cast<int>(i);
             m_mouseHovering = true;
             foundHover = true;
@@ -193,6 +198,7 @@ void PauseScene::handleMenuClick() {
     executeCurrentItem();
 }
 void PauseScene::selectPreviousItem() {
+    AudioManager::getInstance().playSound("cursor");
     m_selectedIndex--;
     if (m_selectedIndex < 0) {
         m_selectedIndex = static_cast<int>(m_menuItems.size()) - 1;
@@ -201,6 +207,7 @@ void PauseScene::selectPreviousItem() {
 }
 
 void PauseScene::selectNextItem() {
+    AudioManager::getInstance().playSound("cursor");
     m_selectedIndex++;
     if (m_selectedIndex >= static_cast<int>(m_menuItems.size())) {
         m_selectedIndex = 0;
@@ -211,6 +218,8 @@ void PauseScene::executeCurrentItem() {
     if (m_selectedIndex < 0 || m_selectedIndex >= static_cast<int>(m_menuActions.size())) {
         return;
     }
+
+    AudioManager::getInstance().playSound("select");
 
     MenuItem action = m_menuActions[m_selectedIndex];
 

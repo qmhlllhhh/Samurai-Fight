@@ -1,5 +1,6 @@
 #include "BlockState.h"
 #include "../entities/Character.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -70,6 +71,10 @@ bool BlockState::hasEnoughStamina() const {
 
 void BlockState::onBlockHit() {
     m_blockSuccess = true;
+
+    // 播放格挡成功音效
+    AudioManager::getInstance().playSound("block_success");
+
     std::cout << "BlockState: Block success!" << std::endl;
 }
 

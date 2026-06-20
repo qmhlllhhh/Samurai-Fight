@@ -1,6 +1,7 @@
 #include "AttackState.h"
 #include "../entities/Character.h"
 #include "../entities/CharacterData.h"
+#include "../managers/AudioManager.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -52,6 +53,11 @@ void AttackState::onEnter() {
     // 重置状态
     m_hasHit = false;
     m_frameCount = 0;
+
+    // 播放攻击音效
+    std::string characterId = m_owner->getData().id;
+    std::string soundType = "attack_" + m_attackType;
+    AudioManager::getInstance().playCharacterSound(characterId, soundType);
 
     std::cout << "AttackState: Entered " << m_attackType << " attack"
               << " (startup=" << m_startupEnd
