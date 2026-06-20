@@ -135,7 +135,7 @@ BattleScene::update(FRAME_TIME)
     │        ├── RoundManager 推进 phase / 倒计时
     │        ├── checkRoundEnd()：HP=0 或 time=0 → 判定 → RoundOver
     │        └── 回合 isFinished → 计分 → 未达 winsNeeded 则自动 startNextRound
-    ├── 4. 若 MatchOver → onMatchEnd()：胜者 changeState(Victory)
+    ├── 4. 若 MatchOver → onMatchEnd()：切 ResultScene（阶段5 增强）
     └── 5. m_matchHud->update(...)：刷新过渡文字/比分/横幅
 ```
 
@@ -244,7 +244,7 @@ void Character::resetForRound() {
 ### 5.5 MatchHud（显示组件）
 
 **文件**：[MatchHud.h](../src/battle/MatchHud.h) / [MatchHud.cpp](../src/battle/MatchHud.cpp)
-**职责**：用 `sf::Text` 绘制顶部过渡文字 + 比分 + 比赛胜负横幅。
+**职责**：组合显示顶部过渡文字 + 计时 + 比分 + 胜负横幅。**阶段5 起改用 `ui/Timer` + `ui/ScoreDisplay` 组件**（过渡/横幅文字自留）。
 
 ```cpp
 class MatchHud {
@@ -254,8 +254,9 @@ public:
                 bool matchOver, int matchWinner);
     void render(sf::RenderWindow& window);
 private:
-    std::unique_ptr<sf::Text> m_announceText;  ///< 过渡/倒计时/结果/胜负横幅
-    std::unique_ptr<sf::Text> m_scoreText;     ///< 比分
+    std::unique_ptr<Timer> m_timer;                  ///< 计时器（Fight 阶段，≤10秒红警告）
+    std::unique_ptr<ScoreDisplay> m_scoreDisplay;    ///< 比分 + 胜场圆点
+    std::unique_ptr<sf::Text> m_announceText;        ///< 过渡/结果/胜负横幅
 };
 ```
 
@@ -275,7 +276,7 @@ private:
 | [BattleScene::onEnter()](../src/scenes/BattleScene.cpp) | 角色创建后构造 MatchManager（自动开始第1回合）与 MatchHud | 在原逻辑后追加 |
 | [BattleScene::update()](../src/scenes/BattleScene.cpp) | 输入传递前加 `isInputLocked()` 守卫；末尾驱动 MatchManager + `onMatchEnd()` + 刷新 MatchHud | 包裹式，不改输入/碰撞/渲染本身 |
 | [BattleScene::render()](../src/scenes/BattleScene.cpp) | 末尾绘制 MatchHud | 纯追加 |
-| [BattleScene::onMatchEnd()](../src/scenes/BattleScene.cpp) | 新增：MatchOver 时胜者 `changeState(Victory)` | 纯新增 |
+| [BattleScene::onMatchEnd()](../src/scenes/BattleScene.cpp) | MatchOver 时切 ResultScene（阶段5 增强，原直接 changeState(Victory) 已替换） | 改钩子 |
 | [StateMachine::createState()](../src/states/StateMachine.cpp) | `case Victory` + `#include "VictoryState.h"` | 加一个 case |
 | [Character::handleInput()](../src/entities/Character.cpp) | Dead 拦截旁加 `if (currentState == Victory) return;` | 一行守卫 |
 | [Character.h/.cpp](../src/entities/Character.h) | 新增 `resetForRound()` | 纯新增 |
@@ -368,8 +369,8 @@ VictoryState: Player X wins!
 
 ### 已知限制
 
-- **VictoryState 无 victory 动画素材**：角色 config 仅有 `death`，胜者进入 VictoryState 后视觉保持站立（状态机已正确进入，输入锁定）。当前靠 MatchHud 的 `PLAYER X WINS!` 横幅体现比赛结果。补 victory 动画素材属阶段 7。
-- **无 ResultScene**：比赛结束后停在胜负画面（横幅 + 比分），按 ESC 回主菜单。正式结果界面属阶段 5。
+- **VictoryState 无 victory 动画素材**：角色 config 仅有 `death`，无 `victory`。比赛结束由 ResultScene（阶段5）展示胜者，VictoryState 保留在状态机但当前 onMatchEnd 不再直接触发（改为切 ResultScene）。补 victory 动画素材属阶段 7。
+- **ResultScene**（阶段5 已实现）：比赛结束 → 结果界面（胜者 + 比分 + 重赛/返回角色选择/返回主菜单）。
 - **构建提示**：重新构建前需关闭运行中的游戏实例，否则链接器无法覆盖 `SamuraiFight.exe`（Windows 文件占用）。
 
 ---
