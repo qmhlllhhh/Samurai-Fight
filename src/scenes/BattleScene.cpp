@@ -44,6 +44,13 @@ void BattleScene::onEnter() {
     // 初始化背景
     initializeBackground();
 
+    // 创建比赛管理器（自动开始第1回合）与HUD
+    if (m_characters[0] && m_characters[1]) {
+        m_matchManager = std::make_unique<MatchManager>(
+            m_characters[0].get(), m_characters[1].get(), ROUND_TIME, WINS_NEEDED);
+    }
+    m_matchHud = std::make_unique<MatchHud>();
+
     // 初始化调试文本
     try {
         const sf::Font &font = ResourceManager::getInstance().getDefaultFont();
@@ -67,6 +74,10 @@ void BattleScene::onExit() {
 
     // 清理输入管理器
     m_inputManager.reset();
+
+    // 清理比赛系统
+    m_matchManager.reset();
+    m_matchHud.reset();
 }
 
 void BattleScene::initializeCharacters() {
@@ -186,20 +197,29 @@ void BattleScene::update(float deltaTime) {
     if (m_inputManager) {
         m_inputManager->update(*m_window);
 
+        // 非对战阶段（过渡/回合结束/比赛结束）锁定玩家输入
+        RoundManager* round = m_matchManager ? m_matchManager->getCurrentRound() : nullptr;
+        bool inputLocked = !round || round->isInputLocked();
+
         // 获取玩家输入并传递给角色
         for (int i = 0; i < 2; ++i) {
             if (m_characters[i]) {
-                InputState input = m_inputManager->getPlayerInput(i);
-                m_characters[i]->handleInput(
-                    input.moveLeft,
-                    input.moveRight,
-                    input.jump,
-                    input.crouch,
-                    input.attackLight,
-                    input.attackMedium,
-                    input.attackHeavy,
-                    input.block,
-                    input.roll);
+                if (inputLocked) {
+                    m_characters[i]->handleInput(false, false, false, false,
+                                                 false, false, false, false, false);
+                } else {
+                    InputState input = m_inputManager->getPlayerInput(i);
+                    m_characters[i]->handleInput(
+                        input.moveLeft,
+                        input.moveRight,
+                        input.jump,
+                        input.crouch,
+                        input.attackLight,
+                        input.attackMedium,
+                        input.attackHeavy,
+                        input.block,
+                        input.roll);
+                }
             }
         }
     }
@@ -257,6 +277,24 @@ void BattleScene::update(float deltaTime) {
 
         m_debugText->setString(debugStr);
     }
+
+    // 驱动比赛
+    if (m_matchManager) {
+        m_matchManager->update(deltaTime);
+
+        if (m_matchManager->getMatchState() == MatchState::MatchOver) {
+            onMatchEnd();
+        }
+
+        // 更新HUD
+        if (m_matchHud && m_matchManager->getCurrentRound()) {
+            m_matchHud->update(*m_matchManager->getCurrentRound(),
+                               m_matchManager->getRoundsWon(0),
+                               m_matchManager->getRoundsWon(1),
+                               m_matchManager->getMatchState() == MatchState::MatchOver,
+                               m_matchManager->getMatchWinner());
+        }
+    }
 }
 
 void BattleScene::render(sf::RenderWindow &window) {
@@ -298,6 +336,11 @@ void BattleScene::render(sf::RenderWindow &window) {
     // 绘制调试信息
     if (m_showDebug && m_debugText) {
         window.draw(*m_debugText);
+    }
+
+    // 绘制比赛HUD（回合文字 + 比分）
+    if (m_matchHud) {
+        m_matchHud->render(window);
     }
 }
 
@@ -444,6 +487,15 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                 return;
             }
         }
+    }
+}
+
+void BattleScene::onMatchEnd() {
+    // 比赛结束：胜者进入胜利状态（败者若被击倒则已是 Dead）
+    int winner = m_matchManager ? m_matchManager->getMatchWinner() : -1;
+    if (winner >= 0 && m_characters[winner] &&
+        m_characters[winner]->getCurrentStateType() != CharacterStateType::Victory) {
+        m_characters[winner]->changeState(CharacterStateType::Victory);
     }
 }
 

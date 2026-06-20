@@ -121,6 +121,12 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool jump, bool crouc
         return;
     }
 
+    // ========== 胜利状态处理 ==========
+    if (currentState == CharacterStateType::Victory) {
+        // 胜利状态下不接受任何输入
+        return;
+    }
+
     // ========== 受击状态处理 ==========
     if (currentState == CharacterStateType::Hurt) {
         // 受击状态下不接受任何输入
@@ -643,6 +649,33 @@ const HealthComponent *Character::getHealthComponent() const {
 
 bool Character::isDead() const {
     return m_health ? m_health->isDead() : false;
+}
+
+void Character::resetForRound() {
+    // 回到起点（与构造函数一致）
+    float startX = (m_playerIndex == 0) ? 300.0f : WINDOW_WIDTH - 300.0f;
+    setPosition(sf::Vector2f(startX, GROUND_LEVEL));
+    setVelocity(sf::Vector2f(0.0f, 0.0f));
+    m_onGround = true;
+    m_facingRight = (m_playerIndex == 0);
+
+    // 回满生命与体力
+    if (m_health) {
+        m_health->reset();
+    }
+    if (m_stamina) {
+        m_stamina->reset();
+    }
+
+    // 清除防御冷却与待处理硬直
+    m_blockCooldown = false;
+    m_blockCooldownTimer = 0;
+    m_pendingStunFrames = 10;
+
+    // 切换回站立状态
+    changeState(CharacterStateType::Idle);
+
+    std::cout << "Character: Player " << m_playerIndex + 1 << " reset for new round" << std::endl;
 }
 
 StaminaComponent *Character::getStaminaComponent() {

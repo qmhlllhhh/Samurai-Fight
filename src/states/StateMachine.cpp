@@ -9,6 +9,7 @@
 #include "BlockState.h"
 #include "RollState.h"
 #include "DeadState.h"
+#include "VictoryState.h"
 
 #include <iostream>
 
@@ -89,6 +90,8 @@ std::unique_ptr<CharacterState> StateMachine::createState(CharacterStateType sta
         return std::make_unique<RollState>(m_owner);
     case CharacterStateType::Dead:
         return std::make_unique<DeadState>(m_owner);
+    case CharacterStateType::Victory:
+        return std::make_unique<VictoryState>(m_owner);
     default:
         std::cerr << "StateMachine: Unknown state type " << static_cast<int>(stateType) << std::endl;
         return nullptr;

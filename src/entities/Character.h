@@ -225,6 +225,14 @@ public:
     bool isDead() const;
 
     /**
+     * @brief 回合开始时整体重置角色
+     *
+     * 回到起点位置、清零速度与朝向、回满生命与体力、
+     * 清除防御冷却，并切换回站立状态。
+     */
+    void resetForRound();
+
+    /**
      * @brief 获取体力值组件
      *
      * @return StaminaComponent* 体力值组件指针

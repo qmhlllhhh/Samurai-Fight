@@ -99,6 +99,7 @@ bool StaminaComponent::canEnterStaminaState() const {
 
 void StaminaComponent::reset() {
     m_currentStamina = m_maxStamina;
+    m_wasJumping = false;  // 同步重置跳跃状态标志，确保 reset 彻底
 }
 
 void StaminaComponent::setMaxStamina(float maxStamina) {

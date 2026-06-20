@@ -855,15 +855,15 @@ SamuraiFight/
 
 **交付物**：可进行基本对战的游戏
 
-### 阶段 4：回合与比赛（第 6 周）
+### 阶段 4：回合与比赛（第 6 周）✅ 已完成
 
-- [ ] RoundManager
-- [ ] MatchManager
-- [ ] 回合过渡动画
-- [ ] 胜负判定
-- [ ] VictoryState
+- [x] RoundManager
+- [x] MatchManager
+- [x] 回合过渡动画
+- [x] 胜负判定
+- [x] VictoryState
 
-**交付物**：完整的回合制对战
+**交付物**：完整的回合制对战 ✅
 
 ### 阶段 5：UI 系统（第 7 周）
 

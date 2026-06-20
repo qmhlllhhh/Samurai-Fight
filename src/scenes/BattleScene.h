@@ -7,6 +7,8 @@
 #include "../input/InputManager.h"
 #include "../ui/HealthBar.h"
 #include "../ui/StaminaBar.h"
+#include "../battle/MatchManager.h"
+#include "../battle/MatchHud.h"
 #include "Scene.h"
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -123,5 +125,14 @@ class BattleScene : public Scene {
     // 调试信息
     std::unique_ptr<sf::Text> m_debugText; ///< 调试文本
     bool m_showDebug;     ///< 是否显示调试信息
+
+    // 比赛系统（阶段4）
+    std::unique_ptr<MatchManager> m_matchManager; ///< 比赛管理器
+    std::unique_ptr<MatchHud> m_matchHud;         ///< 比赛HUD
+
+    /**
+     * @brief 比赛结束时处理（胜者进入胜利状态）
+     */
+    void onMatchEnd();
 };
 } // namespace SamuraiFight
