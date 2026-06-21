@@ -200,7 +200,7 @@ void BattleScene::update(float deltaTime) {
         m_inputManager->update(*m_window);
 
         // 非对战阶段（过渡/回合结束/比赛结束）锁定玩家输入
-        RoundManager* round = m_matchManager ? m_matchManager->getCurrentRound() : nullptr;
+        RoundManager *round = m_matchManager ? m_matchManager->getCurrentRound() : nullptr;
         bool inputLocked = !round || round->isInputLocked();
 
         // 获取玩家输入并传递给角色
@@ -499,7 +499,7 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                         defenderChar->takeDamage(damage, stunFrames);
 
                         // 播放命中音效
-                        AudioManager::getInstance().playSound("hit");
+                        AudioManager::getInstance().playSound("hit", 2.0f);
 
                         // 屏幕震动 - 根据攻击类型设置不同强度
                         float shakeIntensity = 3.0f;
@@ -531,9 +531,11 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
 
 void BattleScene::onMatchEnd() {
     // 比赛结束：切换到结果场景（仅切一次）
-    if (!m_matchManager || m_nextScene != nullptr) return;
+    if (!m_matchManager || m_nextScene != nullptr)
+        return;
     int winner = m_matchManager->getMatchWinner();
-    if (winner < 0) return;
+    if (winner < 0)
+        return;
 
     m_nextScene = std::make_unique<ResultScene>(
         winner,
@@ -541,7 +543,7 @@ void BattleScene::onMatchEnd() {
         m_matchManager->getRoundsWon(1),
         m_player1CharacterId,
         m_player2CharacterId);
-    m_popSceneCount = 1;  // 替换 BattleScene
+    m_popSceneCount = 1; // 替换 BattleScene
 }
 
 } // namespace SamuraiFight

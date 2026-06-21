@@ -1,24 +1,22 @@
 #include "StateMachine.h"
 #include "../entities/Character.h"
-#include "IdleState.h"
-#include "WalkState.h"
-#include "RunState.h"
-#include "JumpState.h"
 #include "AttackState.h"
-#include "HurtState.h"
 #include "BlockState.h"
-#include "RollState.h"
 #include "DeadState.h"
+#include "HurtState.h"
+#include "IdleState.h"
+#include "JumpState.h"
+#include "RollState.h"
+#include "RunState.h"
 #include "VictoryState.h"
+#include "WalkState.h"
 
 #include <iostream>
 
 namespace SamuraiFight {
 
-StateMachine::StateMachine(Character* owner)
-    : m_owner(owner)
-    , m_currentState(nullptr)
-    , m_currentStateType(CharacterStateType::Idle) {
+StateMachine::StateMachine(Character *owner)
+    : m_owner(owner), m_currentState(nullptr), m_currentStateType(CharacterStateType::Idle) {
     // 初始化为站立状态
     changeState(CharacterStateType::Idle);
 }
@@ -31,7 +29,8 @@ StateMachine::~StateMachine() {
 
 void StateMachine::changeState(CharacterStateType stateType) {
     // 如果是同一个状态，不切换
-    if (m_currentState && m_currentStateType == stateType) {
+    // 如果是硬直状态则刷新
+    if (m_currentState && m_currentStateType == stateType && stateType != CharacterStateType::Hurt) {
         return;
     }
 
@@ -58,7 +57,7 @@ void StateMachine::update(float deltaTime) {
     }
 }
 
-CharacterState* StateMachine::getCurrentState() const {
+CharacterState *StateMachine::getCurrentState() const {
     return m_currentState.get();
 }
 
