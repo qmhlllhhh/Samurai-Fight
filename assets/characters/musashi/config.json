@@ -13,10 +13,10 @@
     },
     "attacks": {
         "light": {
-            "damage": 10,
-            "startupFrames": 8,
-            "activeFrames": 4,
-            "recoveryFrames": 12,
+            "damage": 6,
+            "startupFrames": 6,
+            "activeFrames": 18,
+            "recoveryFrames": 0,
             "stunFrames": 8,
             "staminaCost": 0,
             "canCancel": false,
@@ -25,10 +25,10 @@
             "hitCount": 1
         },
         "medium": {
-            "damage": 15,
+            "damage": 9,
             "startupFrames": 10,
-            "activeFrames": 5,
-            "recoveryFrames": 15,
+            "activeFrames": 10,
+            "recoveryFrames": 4,
             "stunFrames": 12,
             "staminaCost": 0,
             "canCancel": false,
@@ -37,10 +37,10 @@
             "hitCount": 2
         },
         "heavy": {
-            "damage": 20,
-            "startupFrames": 8,
-            "activeFrames": 4,
-            "recoveryFrames": 12,
+            "damage": 12,
+            "startupFrames": 15,
+            "activeFrames": 9,
+            "recoveryFrames": 6,
             "stunFrames": 18,
             "staminaCost": 0,
             "canCancel": false,
@@ -91,16 +91,16 @@
             "frameHeight": 128
         },
         "attack_medium": {
-            "spriteSheet": "assets/characters/musashi/attack_2.png",
-            "frameCount": 5,
+            "spriteSheet": "assets/characters/musashi/attack_3.png",
+            "frameCount": 4,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
         },
         "attack_heavy": {
-            "spriteSheet": "assets/characters/musashi/attack_3.png",
-            "frameCount": 4,
+            "spriteSheet": "assets/characters/musashi/attack_2.png",
+            "frameCount": 5,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
@@ -155,7 +155,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -164,7 +164,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -173,7 +173,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -182,7 +182,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -191,7 +191,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             },
             {
@@ -201,10 +201,25 @@
                 "height": 60,
                 "type": "hitbox",
                 "activeFrames": [
+                    5,
+                    6,
+                    7,
                     8,
                     9,
                     10,
-                    11
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23
                 ]
             }
         ],
@@ -213,7 +228,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             },
             {
@@ -227,7 +242,12 @@
                     11,
                     12,
                     13,
-                    14
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
                 ]
             }
         ],
@@ -236,7 +256,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             },
             {
@@ -246,10 +266,12 @@
                 "height": 90,
                 "type": "hitbox",
                 "activeFrames": [
-                    8,
-                    9,
-                    10,
-                    11
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20
                 ]
             }
         ],
@@ -258,7 +280,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -267,7 +289,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -276,7 +298,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ],
@@ -285,7 +307,7 @@
                 "x": -45,
                 "y": -202.5,
                 "width": 90,
-                "height": 187.5,
+                "height": 207.5,
                 "type": "hurtbox"
             }
         ]

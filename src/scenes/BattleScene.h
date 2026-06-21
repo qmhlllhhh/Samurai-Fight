@@ -64,6 +64,13 @@ class BattleScene : public Scene {
     void onExit() override;
 
     /**
+     * @brief 从暂停/设置返回时触发
+     *
+     * 重新加载键位，使 SettingsScene 的改键在回到战斗后立即生效。
+     */
+    void onResume() override;
+
+    /**
      * @brief 处理输入事件
      *
      * @param window 游戏窗口

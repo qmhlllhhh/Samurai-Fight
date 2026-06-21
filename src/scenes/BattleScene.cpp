@@ -81,6 +81,14 @@ void BattleScene::onExit() {
     m_matchHud.reset();
 }
 
+void BattleScene::onResume() {
+    // 从暂停/设置返回：重新加载键位（SettingsScene 改键后立即生效）
+    if (m_inputManager) {
+        m_inputManager->initialize();
+        std::cout << "BattleScene: onResume - reloaded key bindings" << std::endl;
+    }
+}
+
 void BattleScene::initializeCharacters() {
     // 加载角色数据
     CharacterFactory &factory = CharacterFactory::getInstance();
