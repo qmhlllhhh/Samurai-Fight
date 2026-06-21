@@ -14,21 +14,21 @@
     "attacks": {
         "light": {
             "damage": 6,
-            "startupFrames": 6,
-            "activeFrames": 18,
+            "startupFrames": 8,
+            "activeFrames": 16,
             "recoveryFrames": 0,
             "stunFrames": 8,
             "staminaCost": 0,
-            "canCancel": false,
-            "cancelWindowStart": 0,
-            "cancelWindowEnd": 0,
+            "canCancel": true,
+            "cancelWindowStart": 8,
+            "cancelWindowEnd": 23,
             "hitCount": 1
         },
         "medium": {
             "damage": 9,
             "startupFrames": 10,
-            "activeFrames": 5,
-            "recoveryFrames": 21,
+            "activeFrames": 10,
+            "recoveryFrames":4 ,
             "stunFrames": 12,
             "staminaCost": 0,
             "canCancel": false,
@@ -38,8 +38,8 @@
         },
         "heavy": {
             "damage": 12,
-            "startupFrames": 15,
-            "activeFrames": 9,
+            "startupFrames": 18,
+            "activeFrames": 12,
             "recoveryFrames": 6,
             "stunFrames": 18,
             "staminaCost": 0,
@@ -92,15 +92,15 @@
         },
         "attack_medium": {
             "spriteSheet": "assets/characters/musashi/attack_2.png",
-            "frameCount": 6,
+            "frameCount": 4,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
             "frameHeight": 128
         },
         "attack_heavy": {
-            "spriteSheet": "assets/characters/musashi/attack_2.png",
-            "frameCount": 5,
+            "spriteSheet": "assets/characters/musashi/attack_3.png",
+            "frameCount": 6,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
@@ -153,57 +153,54 @@
         "idle": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             }
         ],
         "walk": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             }
         ],
         "run": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             }
         ],
         "jump": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -255.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 245.5,
                 "type": "hurtbox"
             }
         ],
         "attack_light": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             },
             {
-                "x": 45,
-                "y": -180,
-                "width": 90,
-                "height": 60,
+                "x": 65,
+                "y": -200,
+                "width": 115,
+                "height": 20,
                 "type": "hitbox",
-                "activeFrames": [
-                    5,
-                    6,
-                    7,
+                "activeFrames": [                                   
                     8,
                     9,
                     10,
@@ -226,15 +223,15 @@
         "attack_medium": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             },
             {
-                "x": 45,
-                "y": -180,
-                "width": 120,
+                "x": 48,
+                "y": -250,
+                "width": 130,
                 "height": 75,
                 "type": "hitbox",
                 "activeFrames": [
@@ -254,60 +251,65 @@
         "attack_heavy": [
             {
                 "x": -45,
-                "y": -202.5,
-                "width": 90,
-                "height": 207.5,
+                "y": -240.5,
+                "width": 85,
+                "height": 240.5,
                 "type": "hurtbox"
             },
             {
                 "x": 45,
-                "y": -195,
+                "y": -190,
                 "width": 150,
-                "height": 90,
+                "height": 130,
                 "type": "hitbox",
                 "activeFrames": [
-                    15,
-                    16,
-                    17,
-                    18,
                     19,
-                    20
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29
                 ]
             }
         ],
         "hurt": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             }
         ],
         "block": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             }
         ],
         "roll": [
             {
                 "x": -45,
-                "y": -202.5,
+                "y": -240.5,
                 "width": 90,
-                "height": 207.5,
+                "height": 240.5,
                 "type": "hurtbox"
             }
         ],
         "death": [
             {
-                "x": -45,
-                "y": -202.5,
-                "width": 90,
-                "height": 207.5,
+                "x": -100,
+                "y": -40.5,
+                "width": 200,
+                "height": 40.5,
                 "type": "hurtbox"
             }
         ]
