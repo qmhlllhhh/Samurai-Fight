@@ -1,19 +1,19 @@
 {
-    "window": {
-        "width": 1280,
-        "height": 720,
-        "title": "Samurai Fight",
-        "fullscreen": false,
-        "vsync": false
+    "audio": {
+        "bgmVolume": 0.8,
+        "masterVolume": 0.5,
+        "sfxVolume": 0.8
     },
     "gameplay": {
-        "targetFPS": 60,
         "roundTime": 60,
+        "targetFPS": 60,
         "winsNeeded": 2
     },
-    "audio": {
-        "masterVolume": 0.5,
-        "bgmVolume": 0.8,
-        "sfxVolume": 0.8
+    "window": {
+        "fullscreen": false,
+        "height": 720,
+        "title": "Samurai Fight",
+        "vsync": false,
+        "width": 1280
     }
 }

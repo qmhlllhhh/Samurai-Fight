@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working Guidelines
+
+### General
+
+- 优先选择编辑而非重写整个文件
+- 除非文件被编辑过，否则不要重复阅读已读过的文件
+- 输出追求简洁，但推理过程必须详尽
+
+### Code Standards
+
+- 一个文件不超过 400 行，超了就拆
+- 嵌套不超过 4 层
+
 ## Project Overview
 
 Samurai Fight (武士对决) is a 2D pixel-art 1v1 fighting game built with C++ and SFML 3.0.
@@ -55,7 +68,7 @@ Scene (base)
 ### Character Components
 
 Each Character has:
-- **StateMachine**: Manages character states (Idle, Move, Jump, Crouch, Attack, Block, Hurt, Victory)
+- **StateMachine**: Manages character states (Idle, Move, Jump, Attack, Block, Hurt, Victory)
 - **InputBuffer**: 12-frame input history for combo detection
 - **HealthComponent**: HP tracking and damage
 - **StaminaComponent**: Stamina for movement/blocking
@@ -101,11 +114,11 @@ void Game::run() {
 
 ### Combat Frame Data
 
-| Attack  | Startup | Active | Recovery | Can Cancel |
-|---------|---------|--------|----------|------------|
-| Light   | 3       | 2      | 5        | Yes (2-5)  |
-| Medium  | 5       | 3      | 8        | Yes (4-8)  |
-| Heavy   | 8       | 4      | 12       | No         |
+| Attack | Startup | Active | Recovery | Can Cancel |
+| ------ | ------- | ------ | -------- | ---------- |
+| Light  | 3       | 2      | 5        | Yes (2-5)  |
+| Medium | 5       | 3      | 8        | Yes (4-8)  |
+| Heavy  | 8       | 4      | 12       | No         |
 
 ### Round System
 
