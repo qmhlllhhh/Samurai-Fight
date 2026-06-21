@@ -28,7 +28,7 @@
             "damage": 15,
             "startupFrames": 10,
             "activeFrames": 5,
-            "recoveryFrames": 15,
+            "recoveryFrames": 21,
             "stunFrames": 12,
             "staminaCost": 0,
             "canCancel": false,
@@ -92,7 +92,7 @@
         },
         "attack_medium": {
             "spriteSheet": "assets/characters/musashi/attack_2.png",
-            "frameCount": 5,
+            "frameCount": 6,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
