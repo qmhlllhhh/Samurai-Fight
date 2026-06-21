@@ -27,8 +27,8 @@
         "medium": {
             "damage": 9,
             "startupFrames": 10,
-            "activeFrames": 10,
-            "recoveryFrames": 4,
+            "activeFrames": 5,
+            "recoveryFrames": 21,
             "stunFrames": 12,
             "staminaCost": 0,
             "canCancel": false,
@@ -91,8 +91,8 @@
             "frameHeight": 128
         },
         "attack_medium": {
-            "spriteSheet": "assets/characters/musashi/attack_3.png",
-            "frameCount": 4,
+            "spriteSheet": "assets/characters/musashi/attack_2.png",
+            "frameCount": 6,
             "frameDuration": 0.1,
             "loop": false,
             "frameWidth": 128,
@@ -132,7 +132,7 @@
         },
         "death": {
             "spriteSheet": "assets/characters/musashi/dead.png",
-            "frameCount": 6,
+            "frameCount": 10,
             "frameDuration": 0.2,
             "loop": false,
             "frameWidth": 128,

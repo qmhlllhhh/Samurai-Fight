@@ -73,7 +73,7 @@ void BlockState::onBlockHit() {
     m_blockSuccess = true;
 
     // 播放格挡成功音效
-    AudioManager::getInstance().playSound("block_success");
+    AudioManager::getInstance().playSound("block_success", 1.5);
 
     std::cout << "BlockState: Block success!" << std::endl;
 }
