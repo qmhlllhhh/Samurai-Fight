@@ -13,10 +13,12 @@ namespace SamuraiFight {
 
 SettingsScene::SettingsScene()
     : m_selectedIndex(0), m_normalColor(sf::Color::White), m_selectedColor(sf::Color(255, 200, 0)), m_titleY(100.0f), m_menuStartY(240.0f), m_menuSpacing(64.0f) {
-    // 填充键位重映射动作（P1 + P2 各 10 个）
+    // 填充键位重映射动作（P1 + P2 各 8 个）
+    // 注：crouch（下蹲）与 attackSpecial（特殊攻击）已在同学的重构中从
+    // Character::handleInput 移除，故不提供这两个动作的重映射。
     std::vector<std::string> actions = {
-        "moveLeft", "moveRight", "jump", "crouch",
-        "attackLight", "attackMedium", "attackHeavy", "attackSpecial",
+        "moveLeft", "moveRight", "jump",
+        "attackLight", "attackMedium", "attackHeavy",
         "block", "roll"};
     for (int p = 0; p < 2; ++p) {
         for (const auto &a : actions) {
@@ -245,11 +247,11 @@ void SettingsScene::render(sf::RenderWindow &window) {
     try {
         const sf::Font &font = ResourceManager::getInstance().getDefaultFont();
         sf::Text hint(font);
-        hint.setString("Up/Down or Mouse: select   Left/Right or Wheel: volume   Enter/Click: confirm   Esc: back & save");
+        hint.setString("Up/Down or Mouse: select   Left/Right or Wheel: volume\nEnter/Click: confirm   Esc: back & save");
         hint.setCharacterSize(20);
         hint.setFillColor(sf::Color(150, 150, 150));
         sf::FloatRect hb = hint.getLocalBounds();
-        hint.setPosition(sf::Vector2f((WINDOW_WIDTH - hb.size.x) / 2.0f, WINDOW_HEIGHT - 50.0f));
+        hint.setPosition(sf::Vector2f((WINDOW_WIDTH - hb.size.x) / 2.0f, WINDOW_HEIGHT - 70.0f));
         window.draw(hint);
     } catch (const std::exception &e) {
         std::cerr << "SettingsScene: Error rendering hint - " << e.what() << std::endl;
