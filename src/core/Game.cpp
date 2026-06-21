@@ -208,6 +208,13 @@ bool Game::createWindow() {
         m_window->setFramerateLimit(TARGET_FPS);
     }
 
+    // 加载图标
+    sf::Image icon;
+    if (!icon.loadFromFile("assets/icon.png")) {
+        std::cerr << "ResourceManager: Failed to load icon from assets/icon.png" << std::endl;
+    }
+    m_window->setIcon(icon);
+
     std::cout << "Game: Window created (" << width << "x" << height << ")" << std::endl;
     return true;
 }
