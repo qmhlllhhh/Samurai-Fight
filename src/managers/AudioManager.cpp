@@ -230,16 +230,7 @@ void AudioManager::update(float deltaTime) {
 
 // ========== 角色特定音效 ==========
 
-bool AudioManager::loadCharacterSounds(const std::string &characterId, const std::string & /*configPath*/) {
-    // 音效已在 ResourceManager 中按 {characterId}_{soundType} 格式加载
-    // 此方法保留用于兼容性，但不再需要从配置文件加载映射
-    std::cout << "AudioManager: Character sounds for " << characterId
-              << " are loaded in ResourceManager" << std::endl;
-    return true;
-}
-
 bool AudioManager::playCharacterSound(const std::string &characterId, const std::string &soundType, float volumeScale) {
-    // 直接构造 soundId: {characterId}_{soundType}
     std::string soundId = characterId + "_" + soundType;
 
     // 播放音效

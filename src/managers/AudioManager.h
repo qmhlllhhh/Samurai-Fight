@@ -1,11 +1,11 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
+#include <functional>
 #include <memory>
 #include <string>
-#include <vector>
 #include <unordered_map>
-#include <functional>
+#include <vector>
 
 namespace SamuraiFight {
 
@@ -29,14 +29,14 @@ class AudioManager {
     /**
      * @brief 获取单例实例
      */
-    static AudioManager& getInstance();
+    static AudioManager &getInstance();
 
     /**
      * @brief 初始化音频管理器
      * @param configPath 配置文件路径
      * @return true 初始化成功
      */
-    bool initialize(const std::string& configPath = "assets/config/game_config.json");
+    bool initialize(const std::string &configPath = "assets/config/game_config.json");
 
     /**
      * @brief 清理资源
@@ -51,7 +51,7 @@ class AudioManager {
      * @param volumeScale 音量缩放因子（0.0-1.0），默认1.0
      * @return true 播放成功
      */
-    bool playSound(const std::string& soundId, float volumeScale = 1.0f);
+    bool playSound(const std::string &soundId, float volumeScale = 1.0f);
 
     /**
      * @brief 停止所有音效
@@ -62,7 +62,7 @@ class AudioManager {
      * @brief 停止指定音效（停止所有该ID的播放实例）
      * @param soundId 音效ID
      */
-    void stopSound(const std::string& soundId);
+    void stopSound(const std::string &soundId);
 
     // ========== 背景音乐 ==========
 
@@ -73,7 +73,7 @@ class AudioManager {
      * @param fadeInDuration 淡入时长（秒），默认0.0
      * @return true 播放成功
      */
-    bool playMusic(const std::string& musicPath, bool loop = true, float fadeInDuration = 0.0f);
+    bool playMusic(const std::string &musicPath, bool loop = true, float fadeInDuration = 0.0f);
 
     /**
      * @brief 停止背景音乐
@@ -142,21 +142,13 @@ class AudioManager {
     // ========== 角色特定音效 ==========
 
     /**
-     * @brief 加载角色音效配置
-     * @param characterId 角色ID
-     * @param configPath 角色配置文件路径
-     * @return true 加载成功
-     */
-    bool loadCharacterSounds(const std::string& characterId, const std::string& configPath);
-
-    /**
      * @brief 播放角色特定音效
      * @param characterId 角色ID
      * @param soundType 音效类型（hurt, death, attack_light等）
      * @param volumeScale 音量缩放因子（0.0-1.0），默认1.0
      * @return true 播放成功
      */
-    bool playCharacterSound(const std::string& characterId, const std::string& soundType, float volumeScale = 1.0f);
+    bool playCharacterSound(const std::string &characterId, const std::string &soundType, float volumeScale = 1.0f);
 
     // ========== 场景背景音乐 ==========
 
@@ -166,22 +158,22 @@ class AudioManager {
      * @param fadeInDuration 淡入时长（秒），默认1.0
      * @return true 播放成功
      */
-    bool playSceneMusic(const std::string& sceneType, float fadeInDuration = 1.0f);
+    bool playSceneMusic(const std::string &sceneType, float fadeInDuration = 1.0f);
 
   private:
     AudioManager();
     ~AudioManager();
 
     // 禁用拷贝和移动
-    AudioManager(const AudioManager&) = delete;
-    AudioManager& operator=(const AudioManager&) = delete;
-    AudioManager(AudioManager&&) = delete;
-    AudioManager& operator=(AudioManager&&) = delete;
+    AudioManager(const AudioManager &) = delete;
+    AudioManager &operator=(const AudioManager &) = delete;
+    AudioManager(AudioManager &&) = delete;
+    AudioManager &operator=(AudioManager &&) = delete;
 
     /**
      * @brief 从配置文件加载音量设置
      */
-    bool loadVolumeFromConfig(const std::string& configPath);
+    bool loadVolumeFromConfig(const std::string &configPath);
 
     /**
      * @brief 应用音量到背景音乐
@@ -200,21 +192,21 @@ class AudioManager {
 
     // ========== 成员变量 ==========
 
-    float m_masterVolume;       ///< 主音量（0.0-1.0）
-    float m_bgmVolume;          ///< 背景音乐音量（0.0-1.0）
-    float m_sfxVolume;          ///< 音效音量（0.0-1.0）
+    float m_masterVolume; ///< 主音量（0.0-1.0）
+    float m_bgmVolume;    ///< 背景音乐音量（0.0-1.0）
+    float m_sfxVolume;    ///< 音效音量（0.0-1.0）
 
-    std::unique_ptr<sf::Music> m_currentMusic;  ///< 当前背景音乐
-    std::string m_currentMusicPath;              ///< 当前音乐路径
-    bool m_musicFading;                          ///< 音乐是否正在淡入淡出
-    float m_musicFadeTimer;                      ///< 淡入淡出计时器
-    float m_musicFadeDuration;                   ///< 淡入淡出总时长
-    float m_musicFadeStartVolume;                ///< 淡入淡出起始音量
-    float m_musicFadeTargetVolume;               ///< 淡入淡出目标音量
-    bool m_musicFadeOutAndStop;                  ///< 淡出后是否停止
+    std::unique_ptr<sf::Music> m_currentMusic; ///< 当前背景音乐
+    std::string m_currentMusicPath;            ///< 当前音乐路径
+    bool m_musicFading;                        ///< 音乐是否正在淡入淡出
+    float m_musicFadeTimer;                    ///< 淡入淡出计时器
+    float m_musicFadeDuration;                 ///< 淡入淡出总时长
+    float m_musicFadeStartVolume;              ///< 淡入淡出起始音量
+    float m_musicFadeTargetVolume;             ///< 淡入淡出目标音量
+    bool m_musicFadeOutAndStop;                ///< 淡出后是否停止
 
-    static constexpr size_t MAX_SOUND_INSTANCES = 32;  ///< 最大同时播放音效数
-    std::vector<std::pair<std::string, std::unique_ptr<sf::Sound>>> m_activeSounds;  ///< 活跃音效列表
+    static constexpr size_t MAX_SOUND_INSTANCES = 32;                               ///< 最大同时播放音效数
+    std::vector<std::pair<std::string, std::unique_ptr<sf::Sound>>> m_activeSounds; ///< 活跃音效列表
 
     // 角色音效映射：characterId -> (soundType -> soundId)
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> m_characterSounds;

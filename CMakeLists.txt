@@ -25,7 +25,7 @@ set(SOURCES
     # Core
     src/main.cpp
     src/core/Game.cpp
-    src/core/GameLoop.cpp
+
     src/core/FrameTimer.cpp
 
     # Managers
