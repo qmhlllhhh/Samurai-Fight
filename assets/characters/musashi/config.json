@@ -132,7 +132,7 @@
         },
         "death": {
             "spriteSheet": "assets/characters/musashi/dead.png",
-            "frameCount": 6,
+            "frameCount": 10,
             "frameDuration": 0.2,
             "loop": false,
             "frameWidth": 128,

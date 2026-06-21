@@ -1,6 +1,6 @@
 #include "RoundManager.h"
-#include "../entities/Character.h"
 #include "../components/HealthComponent.h"
+#include "../entities/Character.h"
 #include <cmath>
 #include <iostream>
 
@@ -8,20 +8,13 @@ namespace SamuraiFight {
 
 namespace {
 // 各阶段持续时间（秒），60 帧 = 1 秒
-constexpr float INTRO_DURATION = 1.0f;       ///< Intro："ROUND n"
-constexpr float READY_DURATION = 0.5f;       ///< Ready："FIGHT!"
-constexpr float ROUND_OVER_DURATION = 2.0f;  ///< RoundOver："K.O."/"TIME UP" 停留
+constexpr float INTRO_DURATION = 1.0f;      ///< Intro："ROUND n"
+constexpr float READY_DURATION = 0.5f;      ///< Ready："FIGHT!"
+constexpr float ROUND_OVER_DURATION = 3.0f; ///< RoundOver："K.O."/"TIME UP" 停留
 } // namespace
 
-RoundManager::RoundManager(Character* p1, Character* p2, int roundTime, int roundNumber)
-    : m_players{p1, p2}
-    , m_roundTime(roundTime)
-    , m_roundNumber(roundNumber)
-    , m_phase(RoundPhase::Intro)
-    , m_phaseTimer(0.0f)
-    , m_timeRemaining(static_cast<float>(roundTime))
-    , m_result(RoundResult::None)
-    , m_timeUp(false) {
+RoundManager::RoundManager(Character *p1, Character *p2, int roundTime, int roundNumber)
+    : m_players{p1, p2}, m_roundTime(roundTime), m_roundNumber(roundNumber), m_phase(RoundPhase::Intro), m_phaseTimer(0.0f), m_timeRemaining(static_cast<float>(roundTime)), m_result(RoundResult::None), m_timeUp(false) {
 }
 
 RoundManager::~RoundManager() {
@@ -130,12 +123,19 @@ void RoundManager::checkRoundEnd() {
     if (m_result != RoundResult::None) {
         setPhase(RoundPhase::RoundOver);
 
-        const char* resultStr = "Unknown";
+        const char *resultStr = "Unknown";
         switch (m_result) {
-        case RoundResult::Player1Win: resultStr = "Player1Win"; break;
-        case RoundResult::Player2Win: resultStr = "Player2Win"; break;
-        case RoundResult::Draw:       resultStr = "Draw"; break;
-        default: break;
+        case RoundResult::Player1Win:
+            resultStr = "Player1Win";
+            break;
+        case RoundResult::Player2Win:
+            resultStr = "Player2Win";
+            break;
+        case RoundResult::Draw:
+            resultStr = "Draw";
+            break;
+        default:
+            break;
         }
         std::cout << "RoundManager: Round " << m_roundNumber << " ended (" << resultStr << ")" << std::endl;
     }

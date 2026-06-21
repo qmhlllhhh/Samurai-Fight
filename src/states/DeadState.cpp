@@ -5,9 +5,8 @@
 
 namespace SamuraiFight {
 
-DeadState::DeadState(Character* owner)
-    : CharacterState(owner, CharacterStateType::Dead)
-    , m_animationFinished(false) {
+DeadState::DeadState(Character *owner)
+    : CharacterState(owner, CharacterStateType::Dead), m_animationFinished(false) {
 }
 
 DeadState::~DeadState() {
@@ -29,6 +28,7 @@ void DeadState::onEnter() {
     // 播放死亡音效
     std::string characterId = m_owner->getData().id;
     AudioManager::getInstance().playCharacterSound(characterId, "death");
+    AudioManager::getInstance().playSound("hit_death", 1.5);
 
     std::cout << "DeadState: Character " << m_owner->getPlayerIndex() << " has died" << std::endl;
 }
