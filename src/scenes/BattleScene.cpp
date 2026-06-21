@@ -461,10 +461,8 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                     }
 
                     auto it = attackerData.attacks.find(attackType);
-                    int attackerStunFrames = 20; // 默认硬直帧
-                    if (it != attackerData.attacks.end()) {
-                        attackerStunFrames = it->second.stunFrames + 30; // 防御反击硬直更长
-                    }
+                    int attackerStunFrames;
+                    attackerStunFrames = it->second.stunFrames + 30;
 
                     // 攻击者陷入硬直
                     attackerChar->triggerHurt(attackerStunFrames);
