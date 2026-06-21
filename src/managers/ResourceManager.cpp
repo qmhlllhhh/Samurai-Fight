@@ -52,6 +52,7 @@ bool ResourceManager::initialize() {
     std::vector<std::pair<std::string, std::string>> soundsToLoad = {
         // Combat sounds
         {"hit", "assets/sounds/combat/hit.wav"},
+        {"hit_death", "assets/sounds/combat/hit_death.wav"},
         {"block_success", "assets/sounds/combat/block_success.wav"},
 
         // Movement sounds

@@ -65,6 +65,25 @@ public:
      */
     bool isPausePressed() const;
 
+    /**
+     * @brief 将 SFML 键码转为键名字符串（stringToKey 的逆，供保存/显示用）
+     *
+     * @param key SFML 键码
+     * @return std::string 键名（如 "A"、"Left"、"Numpad1"）
+     */
+    static std::string keyToString(sf::Keyboard::Key key);
+
+    /**
+     * @brief 将物理扫描码转为键名字符串（供键位重映射捕获用）
+     *
+     * 用 Scancode 而非 Key：SFML 3.0 在某些键盘布局下事件 code
+     * 对字母/数字返回 Unknown(-1)，而 scancode 总是有效。
+     *
+     * @param scancode 物理扫描码
+     * @return std::string 键名
+     */
+    static std::string scancodeToString(sf::Keyboard::Scancode scancode);
+
 private:
     /**
      * @brief 加载默认键位

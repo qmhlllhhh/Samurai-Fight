@@ -10,8 +10,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # 设置 MSYS2 UCRT64 路径（如果需要）
-if(EXISTS "D:/msys64/ucrt64")
-    list(APPEND CMAKE_PREFIX_PATH "D:/msys64/ucrt64")
+if(EXISTS "C:/msys64/ucrt64")
+    list(APPEND CMAKE_PREFIX_PATH "C:/msys64/ucrt64")
 endif()
 
 # 查找 SFML 3.0
@@ -40,6 +40,8 @@ set(SOURCES
     src/scenes/CharacterSelectScene.cpp
     src/scenes/BattleScene.cpp
     src/scenes/PauseScene.cpp
+    src/scenes/SettingsScene.cpp
+    src/scenes/ResultScene.cpp
 
     # Entities
     src/entities/Entity.cpp
@@ -66,6 +68,12 @@ set(SOURCES
     src/states/HurtState.cpp
     src/states/RollState.cpp
     src/states/DeadState.cpp
+    src/states/VictoryState.cpp
+
+    # Battle
+    src/battle/RoundManager.cpp
+    src/battle/MatchManager.cpp
+    src/battle/MatchHud.cpp
 
     # Utils
     src/utils/JsonLoader.cpp
@@ -80,6 +88,8 @@ set(SOURCES
     # UI
     src/ui/HealthBar.cpp
     src/ui/StaminaBar.cpp
+    src/ui/Timer.cpp
+    src/ui/ScoreDisplay.cpp
 )
 
 # 头文件目录

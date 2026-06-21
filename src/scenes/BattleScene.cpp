@@ -7,6 +7,7 @@
 #include "../states/BlockState.h"
 #include "../states/StateMachine.h"
 #include "PauseScene.h"
+#include "ResultScene.h"
 #include <iostream>
 
 namespace SamuraiFight {
@@ -44,6 +45,13 @@ void BattleScene::onEnter() {
     // 初始化背景
     initializeBackground();
 
+    // 创建比赛管理器（自动开始第1回合）与HUD
+    if (m_characters[0] && m_characters[1]) {
+        m_matchManager = std::make_unique<MatchManager>(
+            m_characters[0].get(), m_characters[1].get(), ROUND_TIME, WINS_NEEDED);
+    }
+    m_matchHud = std::make_unique<MatchHud>();
+
     // 初始化调试文本
     try {
         const sf::Font &font = ResourceManager::getInstance().getDefaultFont();
@@ -67,6 +75,18 @@ void BattleScene::onExit() {
 
     // 清理输入管理器
     m_inputManager.reset();
+
+    // 清理比赛系统
+    m_matchManager.reset();
+    m_matchHud.reset();
+}
+
+void BattleScene::onResume() {
+    // 从暂停/设置返回：重新加载键位（SettingsScene 改键后立即生效）
+    if (m_inputManager) {
+        m_inputManager->initialize();
+        std::cout << "BattleScene: onResume - reloaded key bindings" << std::endl;
+    }
 }
 
 void BattleScene::initializeCharacters() {
@@ -187,21 +207,31 @@ void BattleScene::update(float deltaTime) {
     if (m_inputManager) {
         m_inputManager->update(*m_window);
 
+        // 非对战阶段（过渡/回合结束/比赛结束）锁定玩家输入
+        RoundManager *round = m_matchManager ? m_matchManager->getCurrentRound() : nullptr;
+        bool inputLocked = !round || round->isInputLocked();
+
         // 获取玩家输入并传递给角色
         for (int i = 0; i < 2; ++i) {
             if (m_characters[i]) {
-                InputState input = m_inputManager->getPlayerInput(i);
-                m_characters[i]->handleInput(
-                    input.moveLeft,
-                    input.moveRight,
-                    input.runLeft,
-                    input.runRight,
-                    input.jump,
-                    input.attackLight,
-                    input.attackMedium,
-                    input.attackHeavy,
-                    input.block,
-                    input.roll);
+                if (inputLocked) {
+                    m_characters[i]->handleInput(false, false, false, false,
+                                                 false, false, false, false, false,
+                                                 false);
+                } else {
+                    InputState input = m_inputManager->getPlayerInput(i);
+                    m_characters[i]->handleInput(
+                        input.moveLeft,
+                        input.moveRight,
+                        input.runLeft,
+                        input.runRight,
+                        input.jump,
+                        input.attackLight,
+                        input.attackMedium,
+                        input.attackHeavy,
+                        input.block,
+                        input.roll);
+                }
             }
         }
     }
@@ -260,6 +290,24 @@ void BattleScene::update(float deltaTime) {
         m_debugText->setString(debugStr);
     }
 
+    // 驱动比赛
+    if (m_matchManager) {
+        m_matchManager->update(deltaTime);
+
+        if (m_matchManager->getMatchState() == MatchState::MatchOver) {
+            onMatchEnd();
+        }
+
+        // 更新HUD
+        if (m_matchHud && m_matchManager->getCurrentRound()) {
+            m_matchHud->update(*m_matchManager->getCurrentRound(),
+                               m_matchManager->getRoundsWon(0),
+                               m_matchManager->getRoundsWon(1),
+                               m_matchManager->getMatchState() == MatchState::MatchOver,
+                               m_matchManager->getMatchWinner());
+        }
+    }
+
     // 更新屏幕震动
     m_screenShake.update(deltaTime);
 }
@@ -312,6 +360,11 @@ void BattleScene::render(sf::RenderWindow &window) {
         ground.setPosition(sf::Vector2f(0.0f, GROUND_LEVEL));
         ground.setFillColor(sf::Color(100, 100, 100));
         window.draw(ground);
+    }
+
+    // 绘制比赛HUD（回合文字 + 比分）
+    if (m_matchHud) {
+        m_matchHud->render(window);
     }
 
     // 恢复原始视图
@@ -408,10 +461,8 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                     }
 
                     auto it = attackerData.attacks.find(attackType);
-                    int attackerStunFrames = 20; // 默认硬直帧
-                    if (it != attackerData.attacks.end()) {
-                        attackerStunFrames = it->second.stunFrames + 30; // 防御反击硬直更长
-                    }
+                    int attackerStunFrames;
+                    attackerStunFrames = it->second.stunFrames + 30;
 
                     // 攻击者陷入硬直
                     attackerChar->triggerHurt(attackerStunFrames);
@@ -454,7 +505,7 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
                         defenderChar->takeDamage(damage, stunFrames);
 
                         // 播放命中音效
-                        AudioManager::getInstance().playSound("hit");
+                        AudioManager::getInstance().playSound("hit", 2.0f);
 
                         // 屏幕震动 - 根据攻击类型设置不同强度
                         float shakeIntensity = 3.0f;
@@ -482,6 +533,23 @@ void BattleScene::checkAttackCollision(int attacker, int defender) {
             }
         }
     }
+}
+
+void BattleScene::onMatchEnd() {
+    // 比赛结束：切换到结果场景（仅切一次）
+    if (!m_matchManager || m_nextScene != nullptr)
+        return;
+    int winner = m_matchManager->getMatchWinner();
+    if (winner < 0)
+        return;
+
+    m_nextScene = std::make_unique<ResultScene>(
+        winner,
+        m_matchManager->getRoundsWon(0),
+        m_matchManager->getRoundsWon(1),
+        m_player1CharacterId,
+        m_player2CharacterId);
+    m_popSceneCount = 1; // 替换 BattleScene
 }
 
 } // namespace SamuraiFight

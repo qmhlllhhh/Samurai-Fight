@@ -144,6 +144,11 @@ sf::Keyboard::Key InputManager::stringToKey(const std::string& keyName) const {
         {"Escape", sf::Keyboard::Key::Escape},
         {"Space", sf::Keyboard::Key::Space},
         {"Enter", sf::Keyboard::Key::Enter},
+        {"Num0", sf::Keyboard::Key::Num0}, {"Num1", sf::Keyboard::Key::Num1},
+        {"Num2", sf::Keyboard::Key::Num2}, {"Num3", sf::Keyboard::Key::Num3},
+        {"Num4", sf::Keyboard::Key::Num4}, {"Num5", sf::Keyboard::Key::Num5},
+        {"Num6", sf::Keyboard::Key::Num6}, {"Num7", sf::Keyboard::Key::Num7},
+        {"Num8", sf::Keyboard::Key::Num8}, {"Num9", sf::Keyboard::Key::Num9},
         {"Numpad0", sf::Keyboard::Key::Numpad0},
         {"Numpad1", sf::Keyboard::Key::Numpad1},
         {"Numpad2", sf::Keyboard::Key::Numpad2},
@@ -163,6 +168,62 @@ sf::Keyboard::Key InputManager::stringToKey(const std::string& keyName) const {
 
     // 默认返回未知键
     return sf::Keyboard::Key::Unknown;
+}
+
+std::string InputManager::keyToString(sf::Keyboard::Key key) {
+    // 与 stringToKey 严格对应的逆向映射（显式列出，不依赖枚举值连续性）
+    static const std::unordered_map<sf::Keyboard::Key, std::string> map = {
+        {sf::Keyboard::Key::A, "A"}, {sf::Keyboard::Key::B, "B"}, {sf::Keyboard::Key::C, "C"},
+        {sf::Keyboard::Key::D, "D"}, {sf::Keyboard::Key::E, "E"}, {sf::Keyboard::Key::F, "F"},
+        {sf::Keyboard::Key::G, "G"}, {sf::Keyboard::Key::H, "H"}, {sf::Keyboard::Key::I, "I"},
+        {sf::Keyboard::Key::J, "J"}, {sf::Keyboard::Key::K, "K"}, {sf::Keyboard::Key::L, "L"},
+        {sf::Keyboard::Key::M, "M"}, {sf::Keyboard::Key::N, "N"}, {sf::Keyboard::Key::O, "O"},
+        {sf::Keyboard::Key::P, "P"}, {sf::Keyboard::Key::Q, "Q"}, {sf::Keyboard::Key::R, "R"},
+        {sf::Keyboard::Key::S, "S"}, {sf::Keyboard::Key::T, "T"}, {sf::Keyboard::Key::U, "U"},
+        {sf::Keyboard::Key::V, "V"}, {sf::Keyboard::Key::W, "W"}, {sf::Keyboard::Key::X, "X"},
+        {sf::Keyboard::Key::Y, "Y"}, {sf::Keyboard::Key::Z, "Z"},
+        {sf::Keyboard::Key::Left, "Left"}, {sf::Keyboard::Key::Right, "Right"},
+        {sf::Keyboard::Key::Up, "Up"}, {sf::Keyboard::Key::Down, "Down"},
+        {sf::Keyboard::Key::Escape, "Escape"}, {sf::Keyboard::Key::Space, "Space"},
+        {sf::Keyboard::Key::Enter, "Enter"},
+        {sf::Keyboard::Key::Numpad0, "Numpad0"}, {sf::Keyboard::Key::Numpad1, "Numpad1"},
+        {sf::Keyboard::Key::Numpad2, "Numpad2"}, {sf::Keyboard::Key::Numpad3, "Numpad3"},
+        {sf::Keyboard::Key::Numpad4, "Numpad4"}, {sf::Keyboard::Key::Numpad5, "Numpad5"},
+        {sf::Keyboard::Key::Numpad6, "Numpad6"}, {sf::Keyboard::Key::Numpad7, "Numpad7"},
+        {sf::Keyboard::Key::Numpad8, "Numpad8"}, {sf::Keyboard::Key::Numpad9, "Numpad9"}};
+    auto it = map.find(key);
+    return (it != map.end()) ? it->second : "Unknown";
+}
+
+std::string InputManager::scancodeToString(sf::Keyboard::Scancode scancode) {
+    // 物理扫描码 → 键名（覆盖字母/数字/小键盘/方向/常用修饰键）
+    static const std::unordered_map<sf::Keyboard::Scancode, std::string> map = {
+        {sf::Keyboard::Scancode::A, "A"}, {sf::Keyboard::Scancode::B, "B"}, {sf::Keyboard::Scancode::C, "C"},
+        {sf::Keyboard::Scancode::D, "D"}, {sf::Keyboard::Scancode::E, "E"}, {sf::Keyboard::Scancode::F, "F"},
+        {sf::Keyboard::Scancode::G, "G"}, {sf::Keyboard::Scancode::H, "H"}, {sf::Keyboard::Scancode::I, "I"},
+        {sf::Keyboard::Scancode::J, "J"}, {sf::Keyboard::Scancode::K, "K"}, {sf::Keyboard::Scancode::L, "L"},
+        {sf::Keyboard::Scancode::M, "M"}, {sf::Keyboard::Scancode::N, "N"}, {sf::Keyboard::Scancode::O, "O"},
+        {sf::Keyboard::Scancode::P, "P"}, {sf::Keyboard::Scancode::Q, "Q"}, {sf::Keyboard::Scancode::R, "R"},
+        {sf::Keyboard::Scancode::S, "S"}, {sf::Keyboard::Scancode::T, "T"}, {sf::Keyboard::Scancode::U, "U"},
+        {sf::Keyboard::Scancode::V, "V"}, {sf::Keyboard::Scancode::W, "W"}, {sf::Keyboard::Scancode::X, "X"},
+        {sf::Keyboard::Scancode::Y, "Y"}, {sf::Keyboard::Scancode::Z, "Z"},
+        {sf::Keyboard::Scancode::Num1, "Num1"}, {sf::Keyboard::Scancode::Num2, "Num2"}, {sf::Keyboard::Scancode::Num3, "Num3"},
+        {sf::Keyboard::Scancode::Num4, "Num4"}, {sf::Keyboard::Scancode::Num5, "Num5"}, {sf::Keyboard::Scancode::Num6, "Num6"},
+        {sf::Keyboard::Scancode::Num7, "Num7"}, {sf::Keyboard::Scancode::Num8, "Num8"}, {sf::Keyboard::Scancode::Num9, "Num9"},
+        {sf::Keyboard::Scancode::Num0, "Num0"},
+        {sf::Keyboard::Scancode::Numpad1, "Numpad1"}, {sf::Keyboard::Scancode::Numpad2, "Numpad2"}, {sf::Keyboard::Scancode::Numpad3, "Numpad3"},
+        {sf::Keyboard::Scancode::Numpad4, "Numpad4"}, {sf::Keyboard::Scancode::Numpad5, "Numpad5"}, {sf::Keyboard::Scancode::Numpad6, "Numpad6"},
+        {sf::Keyboard::Scancode::Numpad7, "Numpad7"}, {sf::Keyboard::Scancode::Numpad8, "Numpad8"}, {sf::Keyboard::Scancode::Numpad9, "Numpad9"},
+        {sf::Keyboard::Scancode::Numpad0, "Numpad0"},
+        {sf::Keyboard::Scancode::Left, "Left"}, {sf::Keyboard::Scancode::Right, "Right"},
+        {sf::Keyboard::Scancode::Up, "Up"}, {sf::Keyboard::Scancode::Down, "Down"},
+        {sf::Keyboard::Scancode::Escape, "Escape"}, {sf::Keyboard::Scancode::Space, "Space"},
+        {sf::Keyboard::Scancode::Enter, "Enter"}, {sf::Keyboard::Scancode::Tab, "Tab"},
+        {sf::Keyboard::Scancode::Backspace, "Backspace"},
+        {sf::Keyboard::Scancode::LShift, "LShift"}, {sf::Keyboard::Scancode::RShift, "RShift"},
+        {sf::Keyboard::Scancode::LControl, "LControl"}, {sf::Keyboard::Scancode::RControl, "RControl"}};
+    auto it = map.find(scancode);
+    return (it != map.end()) ? it->second : "Unknown";
 }
 
 void InputManager::updatePlayerInput(

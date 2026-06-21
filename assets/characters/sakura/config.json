@@ -17,10 +17,10 @@
             "startupFrames": 6,
             "activeFrames": 18,
             "recoveryFrames": 0,
-            "stunFrames": 25,
+            "stunFrames": 22,
             "staminaCost": 0,
             "canCancel": true,
-            "cancelWindowStart": 12,
+            "cancelWindowStart": 8,
             "cancelWindowEnd": 23,
             "hitCount": 1
         },
@@ -29,11 +29,11 @@
             "startupFrames": 12,
             "activeFrames": 18,
             "recoveryFrames": 6,
-            "stunFrames": 12,
+            "stunFrames": 35,
             "staminaCost": 0,
-            "canCancel": false,
-            "cancelWindowStart": 0,
-            "cancelWindowEnd": 0,
+            "canCancel": true,
+            "cancelWindowStart": 24,
+            "cancelWindowEnd": 35,
             "hitCount": 2
         },
         "heavy": {
@@ -132,7 +132,7 @@
         },
         "death": {
             "spriteSheet": "assets/characters/sakura/dead.png",
-            "frameCount": 3,
+            "frameCount": 5,
             "frameDuration": 0.4,
             "loop": false,
             "frameWidth": 128,

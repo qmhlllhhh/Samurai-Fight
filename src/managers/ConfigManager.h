@@ -150,6 +150,31 @@ public:
      */
     float getSFXVolume() const;
 
+    /**
+     * @brief 设置主音量（0.0-1.0，自动钳制）
+     */
+    void setMasterVolume(float v);
+    void setBGMVolume(float v);
+    void setSFXVolume(float v);
+
+    /**
+     * @brief 保存配置回 JSON 文件
+     *
+     * @param path 目标路径
+     * @return true 保存成功
+     */
+    bool saveGameConfig(const std::string& path);
+    bool saveKeyBindings(const std::string& path);
+
+    /**
+     * @brief 设置键位绑定
+     *
+     * @param player 玩家（0=P1, 1=P2, 2=global）
+     * @param action 动作名（如 "moveLeft"）
+     * @param keyName 键名（如 "A"、"Numpad1"）
+     */
+    void setKeyBinding(int player, const std::string& action, const std::string& keyName);
+
 private:
     nlohmann::json m_gameConfig;    ///< 游戏配置
     nlohmann::json m_keyBindings;   ///< 键位配置

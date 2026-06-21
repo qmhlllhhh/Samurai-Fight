@@ -1,27 +1,27 @@
 {
+    "global": {
+        "pause": "Escape"
+    },
     "player1": {
-        "moveLeft": "A",
-        "moveRight": "D",
-        "jump": "W",
+        "attackHeavy": "L",
         "attackLight": "J",
         "attackMedium": "K",
-        "attackHeavy": "L",
         "attackSpecial": "U",
         "block": "I",
+        "jump": "W",
+        "moveLeft": "A",
+        "moveRight": "D",
         "roll": "O"
     },
     "player2": {
-        "moveLeft": "Left",
-        "moveRight": "Right",
-        "jump": "Up",
+        "attackHeavy": "Numpad3",
         "attackLight": "Numpad1",
         "attackMedium": "Numpad2",
-        "attackHeavy": "Numpad3",
         "attackSpecial": "Numpad4",
         "block": "Numpad5",
+        "jump": "Up",
+        "moveLeft": "Left",
+        "moveRight": "Right",
         "roll": "Numpad6"
-    },
-    "global": {
-        "pause": "Escape"
     }
 }

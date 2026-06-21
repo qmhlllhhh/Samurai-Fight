@@ -4,6 +4,7 @@
 #include "../managers/AudioManager.h"
 #include "../managers/ResourceManager.h"
 #include "BattleScene.h"
+#include "MainMenuScene.h"
 #include <filesystem>
 #include <iostream>
 
@@ -134,7 +135,8 @@ void CharacterSelectScene::handleEvents(sf::RenderWindow &window) {
         if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             // ESC返回主菜单
             if (keyPressed->code == sf::Keyboard::Key::Escape) {
-                m_popSceneCount = 1;
+                m_nextScene = std::make_unique<MainMenuScene>();
+                m_popSceneCount = 1;  // 返回主菜单（不退出游戏）
                 return;
             }
         }

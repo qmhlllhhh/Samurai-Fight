@@ -156,4 +156,38 @@ float ConfigManager::getSFXVolume() const {
     return DEFAULT_SFX_VOLUME;
 }
 
+void ConfigManager::setMasterVolume(float v) {
+    if (v < 0.0f) v = 0.0f;
+    if (v > 1.0f) v = 1.0f;
+    m_gameConfig["audio"]["masterVolume"] = v;
+}
+
+void ConfigManager::setBGMVolume(float v) {
+    if (v < 0.0f) v = 0.0f;
+    if (v > 1.0f) v = 1.0f;
+    m_gameConfig["audio"]["bgmVolume"] = v;
+}
+
+void ConfigManager::setSFXVolume(float v) {
+    if (v < 0.0f) v = 0.0f;
+    if (v > 1.0f) v = 1.0f;
+    m_gameConfig["audio"]["sfxVolume"] = v;
+}
+
+bool ConfigManager::saveGameConfig(const std::string& path) {
+    return JsonLoader::saveToFile(path, m_gameConfig);
+}
+
+bool ConfigManager::saveKeyBindings(const std::string& path) {
+    return JsonLoader::saveToFile(path, m_keyBindings);
+}
+
+void ConfigManager::setKeyBinding(int player, const std::string& action, const std::string& keyName) {
+    std::string section;
+    if (player == 0) section = "player1";
+    else if (player == 1) section = "player2";
+    else section = "global";
+    m_keyBindings[section][action] = keyName;
+}
+
 } // namespace SamuraiFight
