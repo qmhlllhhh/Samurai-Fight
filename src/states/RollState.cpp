@@ -7,7 +7,7 @@
 namespace SamuraiFight {
 
 RollState::RollState(Character *owner)
-    : CharacterState(owner, CharacterStateType::Roll), m_totalFrames(25) // 翻滚持续20帧
+    : CharacterState(owner, CharacterStateType::Roll), m_totalFrames(25) // 翻滚持续25帧
       ,
       m_rollSpeed(1000.0f) // 翻滚速度（比走路快）
       ,

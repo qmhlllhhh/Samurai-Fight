@@ -162,7 +162,16 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool runLeft, bool ru
 
     // ========== 翻滚状态处理 ==========
     if (currentState == CharacterStateType::Roll) {
-        // 翻滚期间不接受任何输入，等待自动结束
+
+        // 翻滚期间如果反向移动，提前结束进入站立状态
+        if ((moveLeft || runLeft) && m_facingRight) {
+            m_facingRight = false;
+            changeState(CharacterStateType::Idle);
+        } else if ((moveRight || runRight) && !m_facingRight) {
+            m_facingRight = true;
+            changeState(CharacterStateType::Idle);
+        }
+
         return;
     }
 
@@ -203,6 +212,13 @@ void Character::handleInput(bool moveLeft, bool moveRight, bool runLeft, bool ru
         // 检查是否可以取消当前攻击
         if (canCancelAttack()) {
             // 优先级：重 > 中 > 轻
+
+            // 翻滚可以取消攻击
+            if (roll && m_stamina && m_stamina->canEnterStaminaState()) {
+                changeState(CharacterStateType::Roll);
+                return;
+            }
+
             if (attackHeavy && currentState != CharacterStateType::AttackHeavy) {
                 changeState(CharacterStateType::AttackHeavy);
                 return;
@@ -517,6 +533,7 @@ int Character::getPlayerIndex() const {
 }
 
 const CharacterData &Character::getData() const {
+
     return m_data;
 }
 
@@ -771,6 +788,11 @@ void Character::setShowDebugHitboxes(bool show) {
 
 bool Character::isShowDebugHitboxes() const {
     return m_showDebugHitboxes;
+}
+
+bool isFacing(const Character *A, const Character *B) {
+    return (A->isFacingRight() && (!B->isFacingRight()) && A->getPosition().x < B->getPosition().x) ||
+           ((!A->isFacingRight()) && B->isFacingRight() && A->getPosition().x > B->getPosition().x);
 }
 
 } // namespace SamuraiFight
