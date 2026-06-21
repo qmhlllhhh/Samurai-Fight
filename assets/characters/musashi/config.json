@@ -290,7 +290,7 @@
             {
                 "x": -45,
                 "y": -240.5,
-                "width": 90,
+                "width": 120,
                 "height": 240.5,
                 "type": "hurtbox"
             }
